@@ -78,6 +78,7 @@ public struct FlexHFlow: Layout {
 
     public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let layoutedSubviews = layoutSubviews(proposal: proposal, subviews: subviews)
+        print("proposal in sizeThatFits: \(proposal), then answer \(calcNecessarySize(layoutedSubviews))")
         return calcNecessarySize(layoutedSubviews)
     }
 
