@@ -19,7 +19,7 @@ public struct FlexHFlow: Layout {
     }
 
     public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        print("proposal in placeSubviews: \(proposal), bounds: \(bounds)")
+        //print("proposal in placeSubviews: \(proposal), bounds: \(bounds)")
         let layoutedSubviews = layoutSubviews(proposal: proposal, subviews: subviews)
 
         let layoutWidth = proposal.width ?? bounds.width
@@ -49,7 +49,7 @@ public struct FlexHFlow: Layout {
             while let (currentCell, nextCell) = cellIterator.next() {
                 let request: ProposedViewSize
                 var adjustLastElement: CGFloat = 0.0
-                if currentCell.size.width < proposal.width! {
+                if currentCell.size.width < layoutWidth {
                     request = ProposedViewSize.unspecified
                 } else {
                     request = ProposedViewSize.init(width: proposal.width!, height: nil)
@@ -79,7 +79,7 @@ public struct FlexHFlow: Layout {
 
     public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let layoutedSubviews = layoutSubviews(proposal: proposal, subviews: subviews)
-        print("proposal in sizeThatFits: \(proposal), then answer \(calcNecessarySize(layoutedSubviews))")
+        //print("proposal in sizeThatFits: \(proposal), then answer \(calcNecessarySize(layoutedSubviews))")
         return calcNecessarySize(layoutedSubviews)
     }
 
