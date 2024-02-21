@@ -8,11 +8,17 @@
 import Foundation
 import SwiftUI
 import SDSSwiftExtension
+import OSLog
+
+extension OSLog {
+    //static var logger = Logger(subsystem: "com.smalldesksoftware.sdslayout", category: "diagonalstack")
+    static var logger = Logger(.disabled)
+}
 
 public struct DiagonalStack: Layout {
     var hSpacing: CGFloat? = nil
     var vSpacing: CGFloat? = nil
-
+    
     public init(hSpacing: CGFloat? = nil, vSpacing: CGFloat? = nil) {
         self.hSpacing = hSpacing
         self.vSpacing = vSpacing
@@ -24,7 +30,6 @@ public struct DiagonalStack: Layout {
 
         while let (current, next) = viewIterator.next() {
             let currentSize = current.sizeThatFits(proposal)
-            print("currentSize \(currentSize)")
             overAllSize.width  += currentSize.width
             overAllSize.height += currentSize.height
             
@@ -35,7 +40,7 @@ public struct DiagonalStack: Layout {
                 } else { overAllSize.height += current.spacing.distance(to: next.spacing, along: .vertical) }
             }
         }
-        print("sizeThatFits returns \(overAllSize)")
+        OSLog.logger.debug("sizeThatFits returns \(overAllSize.debugDescription)")
         
         return overAllSize
     }
@@ -46,7 +51,9 @@ public struct DiagonalStack: Layout {
 
         while let (current, next) = viewIterator.next() {
             current.place(at: pos, anchor: .topLeading, proposal: proposal)
-            
+         
+            OSLog.logger.debug("palce at \(pos.debugDescription)")
+
             let currentSize = current.sizeThatFits(proposal)
             pos.x += currentSize.width
             pos.y += currentSize.height
