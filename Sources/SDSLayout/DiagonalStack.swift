@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import SDSSwiftExtension
+import SDSCGExtension
 import OSLog
 
 extension OSLog {
@@ -15,16 +16,41 @@ extension OSLog {
     static var logger = Logger(.disabled)
 }
 
+
+extension ProposedViewSize: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(width)
+        hasher.combine(height)
+    }
+}
+
+struct LayoutInfo: LayoutValueKey {
+    static let defaultValue: String = ""
+}
+
 public struct DiagonalStack: Layout {
     var hSpacing: CGFloat? = nil
     var vSpacing: CGFloat? = nil
     
+    var cache: DiagonalStackCache
+    
     public init(hSpacing: CGFloat? = nil, vSpacing: CGFloat? = nil) {
         self.hSpacing = hSpacing
         self.vSpacing = vSpacing
+        self.cache = DiagonalStackCache()
     }
     
-    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    public class DiagonalStackCache {
+        var sizeThatFit: [ProposedViewSize: CGSize] = [:]
+        var locDic: [String: CGVector] = [:]
+    }
+    
+    public typealias Cache = DiagonalStackCache
+    public func makeCache(subviews: Subviews) -> DiagonalStackCache {
+        return self.cache
+    }
+
+    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout DiagonalStackCache) -> CGSize {
         var overAllSize: CGSize = .zero
         var viewIterator = PairIterator(subviews)
 
@@ -41,30 +67,35 @@ public struct DiagonalStack: Layout {
             }
         }
         OSLog.logger.debug("sizeThatFits returns \(overAllSize.debugDescription)")
-        
+        cache.sizeThatFit[proposal] = overAllSize
         return overAllSize
     }
     
-    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout DiagonalStackCache) {
         var pos: CGPoint = CGPoint(x: bounds.minX, y: bounds.minY)
+        var offset: CGVector = CGVector(dx: 0, dy: 0)
         var viewIterator = PairIterator(subviews)
 
         while let (current, next) = viewIterator.next() {
-            current.place(at: pos, anchor: .topLeading, proposal: proposal)
+            current.place(at: pos + offset, anchor: .topLeading, proposal: proposal)
+            if current[LayoutInfo.self] != "" {
+                cache.locDic[current[LayoutInfo.self]] = offset
+            }
          
             OSLog.logger.debug("palce at \(pos.debugDescription)")
 
             let currentSize = current.sizeThatFits(proposal)
-            pos.x += currentSize.width
-            pos.y += currentSize.height
+            offset.dx += currentSize.width
+            offset.dy += currentSize.height
             
             if let next = next {
-                if let hSpacing = hSpacing { pos.x += hSpacing
-                } else { pos.x += current.spacing.distance(to: next.spacing, along: .horizontal) }
-                if let vSpacing = vSpacing { pos.y += vSpacing
-                } else { pos.y += current.spacing.distance(to: next.spacing, along: .vertical) }
+                if let hSpacing = hSpacing { offset.dx += hSpacing
+                } else { offset.dx += current.spacing.distance(to: next.spacing, along: .horizontal) }
+                if let vSpacing = vSpacing { offset.dy += vSpacing
+                } else { offset.dy += current.spacing.distance(to: next.spacing, along: .vertical) }
             }
         }
     }
-    
 }
+
+
