@@ -12,8 +12,8 @@ import SDSCGExtension
 import OSLog
 
 extension OSLog {
-    //static var logger = Logger(subsystem: "com.smalldesksoftware.sdslayout", category: "diagonalstack")
-    static var logger = Logger(.disabled)
+    //static var dStack = Logger(subsystem: "com.smalldesksoftware.sdslayout", category: "diagonalstack")
+    static var dStack = Logger(.disabled)
 }
 
 
@@ -29,14 +29,19 @@ struct LayoutInfo: LayoutValueKey {
 }
 
 public struct DiagonalStack: Layout {
-    var hSpacing: CGFloat? = nil
-    var vSpacing: CGFloat? = nil
+    let hSpacing: CGFloat?
+    let vSpacing: CGFloat?
+    let maxWidth: CGFloat?
+    let maxHeight: CGFloat?
     
     var cache: DiagonalStackCache
     
-    public init(hSpacing: CGFloat? = nil, vSpacing: CGFloat? = nil) {
+    public init(hSpacing: CGFloat? = nil, vSpacing: CGFloat? = nil,
+                maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) {
         self.hSpacing = hSpacing
         self.vSpacing = vSpacing
+        self.maxWidth = maxWidth
+        self.maxHeight = maxHeight
         self.cache = DiagonalStackCache()
     }
     
@@ -53,11 +58,26 @@ public struct DiagonalStack: Layout {
     public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout DiagonalStackCache) -> CGSize {
         var overAllSize: CGSize = .zero
         var viewIterator = PairIterator(subviews)
+        
+        let maxSize = CGSize(width: maxWidth ?? .infinity, height: maxHeight ?? .infinity)
 
         while let (current, next) = viewIterator.next() {
             let currentSize = current.sizeThatFits(proposal)
+            
             overAllSize.width  += currentSize.width
             overAllSize.height += currentSize.height
+            
+            // check layout-ability of next element
+            if let next = next {
+                let nextSize = next.sizeThatFits(proposal)
+                if maxSize.height <= (overAllSize.width + nextSize.width) ||
+                    maxSize.height <= (overAllSize.height + nextSize.height) {
+                    // too large, ignore following views
+                    OSLog.dStack.debug("sizeThatFits returns \(overAllSize.debugDescription) with ommiting views")
+                    cache.sizeThatFit[proposal] = overAllSize
+                    return overAllSize
+                }
+            }
             
             if let next = next {
                 if let hSpacing = hSpacing { overAllSize.width += hSpacing
@@ -66,7 +86,7 @@ public struct DiagonalStack: Layout {
                 } else { overAllSize.height += current.spacing.distance(to: next.spacing, along: .vertical) }
             }
         }
-        OSLog.logger.debug("sizeThatFits returns \(overAllSize.debugDescription)")
+        OSLog.dStack.debug("sizeThatFits returns \(overAllSize.debugDescription)")
         cache.sizeThatFit[proposal] = overAllSize
         return overAllSize
     }
@@ -76,18 +96,30 @@ public struct DiagonalStack: Layout {
         var offset: CGVector = CGVector(dx: 0, dy: 0)
         var viewIterator = PairIterator(subviews)
 
+        let maxSize = CGSize(width: maxWidth ?? .infinity, height: maxHeight ?? .infinity)
+
         while let (current, next) = viewIterator.next() {
             current.place(at: pos + offset, anchor: .topLeading, proposal: proposal)
             if current[LayoutInfo.self] != "" {
                 cache.locDic[current[LayoutInfo.self]] = offset
             }
          
-            OSLog.logger.debug("palce at \(pos.debugDescription)")
+            OSLog.dStack.debug("palce at \(pos.debugDescription)")
 
             let currentSize = current.sizeThatFits(proposal)
             offset.dx += currentSize.width
             offset.dy += currentSize.height
             
+            // check layout-ability of next element
+            if let next = next {
+                let nextSize = next.sizeThatFits(proposal)
+                if maxSize.height <= (offset.dx + nextSize.width) ||
+                    maxSize.height <= (offset.dy + nextSize.height) {
+                    // too large, layout start till element before current
+                    OSLog.dStack.debug("skip following views because of max-size")
+                    return
+                }
+            }
             if let next = next {
                 if let hSpacing = hSpacing { offset.dx += hSpacing
                 } else { offset.dx += current.spacing.distance(to: next.spacing, along: .horizontal) }
