@@ -67,11 +67,20 @@ public struct DiagonalStack: Layout {
             overAllSize.width  += currentSize.width
             overAllSize.height += currentSize.height
             
+            var spacing: CGSize = .zero
+            if let next = next {
+                if let hSpacing = hSpacing { spacing.width = hSpacing
+                } else { spacing.width  = current.spacing.distance(to: next.spacing, along: .horizontal) }
+                if let vSpacing = vSpacing { spacing.height = vSpacing
+                } else { spacing.height = current.spacing.distance(to: next.spacing, along: .vertical) }
+            }
+            
             // check layout-ability of next element
             if let next = next {
-                let nextSize = next.sizeThatFits(proposal)
-                if maxSize.height <= (overAllSize.width + nextSize.width) ||
-                    maxSize.height <= (overAllSize.height + nextSize.height) {
+                let nextSize = next.sizeThatFits(proposal).expand(overAllSize).expand(spacing)
+                
+                if maxSize.width < nextSize.width ||
+                    maxSize.height < nextSize.height {
                     // too large, ignore following views
                     OSLog.dStack.debug("sizeThatFits returns \(overAllSize.debugDescription) with ommiting views")
                     cache.sizeThatFit[proposal] = overAllSize
@@ -79,12 +88,7 @@ public struct DiagonalStack: Layout {
                 }
             }
             
-            if let next = next {
-                if let hSpacing = hSpacing { overAllSize.width += hSpacing
-                } else { overAllSize.width  += current.spacing.distance(to: next.spacing, along: .horizontal) }
-                if let vSpacing = vSpacing { overAllSize.height += vSpacing
-                } else { overAllSize.height += current.spacing.distance(to: next.spacing, along: .vertical) }
-            }
+            overAllSize = overAllSize.expand(spacing)
         }
         OSLog.dStack.debug("sizeThatFits returns \(overAllSize.debugDescription)")
         cache.sizeThatFit[proposal] = overAllSize
@@ -96,7 +100,7 @@ public struct DiagonalStack: Layout {
         var offset: CGVector = CGVector(dx: 0, dy: 0)
         var viewIterator = PairIterator(subviews)
 
-        let maxSize = CGSize(width: maxWidth ?? .infinity, height: maxHeight ?? .infinity)
+        let maxOffset = CGVector(dx: maxWidth ?? .infinity, dy: maxHeight ?? .infinity)
 
         while let (current, next) = viewIterator.next() {
             current.place(at: pos + offset, anchor: .topLeading, proposal: proposal)
@@ -110,22 +114,27 @@ public struct DiagonalStack: Layout {
             offset.dx += currentSize.width
             offset.dy += currentSize.height
             
+            var spacing: CGSize = .zero
+            if let next = next {
+                if let hSpacing = hSpacing { spacing.width = hSpacing
+                } else { spacing.width  = current.spacing.distance(to: next.spacing, along: .horizontal) }
+                if let vSpacing = vSpacing { spacing.height = vSpacing
+                } else { spacing.height = current.spacing.distance(to: next.spacing, along: .vertical) }
+            }
+            
             // check layout-ability of next element
             if let next = next {
-                let nextSize = next.sizeThatFits(proposal)
-                if maxSize.height <= (offset.dx + nextSize.width) ||
-                    maxSize.height <= (offset.dy + nextSize.height) {
-                    // too large, layout start till element before current
+                let nextOffset = next.sizeThatFits(proposal).expand(offset.cgSize()).expand(spacing).cgVector()
+                
+                if maxOffset.dx < nextOffset.dx ||
+                    maxOffset.dy < nextOffset.dy {
+                    // too large, ignore following views
                     OSLog.dStack.debug("skip following views because of max-size")
                     return
                 }
             }
-            if let next = next {
-                if let hSpacing = hSpacing { offset.dx += hSpacing
-                } else { offset.dx += current.spacing.distance(to: next.spacing, along: .horizontal) }
-                if let vSpacing = vSpacing { offset.dy += vSpacing
-                } else { offset.dy += current.spacing.distance(to: next.spacing, along: .vertical) }
-            }
+            offset.dx += spacing.width
+            offset.dy += spacing.height
         }
     }
 }

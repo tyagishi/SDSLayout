@@ -67,4 +67,19 @@ final class DiagonalStackTests: XCTestCase {
         XCTAssertEqual(sut.cache.locDic["red30"], CGVector(dx: 50, dy: 50))
         XCTAssertEqual(sut.cache.locDic["yellow30"], nil) // should be not-layouted
     }
+    func test_twoView_maxSpacingMinus() async throws {
+        let sut = DiagonalStack(hSpacing: -10, vSpacing: -10, maxWidth: 50, maxHeight: 100)
+        let view = sut {
+            Color.blue.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "blue30")
+            Color.red.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "red30")
+            Color.yellow.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "yellow30")
+        }
+        let _ = ImageRenderer(content: view).nsImage
+        
+        XCTAssertEqual(sut.cache.sizeThatFit[.unspecified], CGSize(width: 50, height: 50))
+        
+        XCTAssertEqual(sut.cache.locDic["blue30"], CGVector(dx: 0, dy: 0))
+        XCTAssertEqual(sut.cache.locDic["red30"], CGVector(dx: 20, dy: 20))
+        XCTAssertEqual(sut.cache.locDic["yellow30"], nil) // should be not-layouted
+    }
 }
