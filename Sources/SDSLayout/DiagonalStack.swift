@@ -16,17 +16,6 @@ extension OSLog {
     static var dStack = Logger(.disabled)
 }
 
-extension ProposedViewSize: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(width)
-        hasher.combine(height)
-    }
-}
-
-struct LayoutInfo: LayoutValueKey {
-    static let defaultValue: String = ""
-}
-
 public struct DiagonalStack: Layout {
     let hSpacing: CGFloat?
     let vSpacing: CGFloat?
