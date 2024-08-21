@@ -9,7 +9,7 @@ import SwiftUI
 import SDSFoundationExtension
 import SDSSwiftExtension
 
-typealias subviewWithSize = (subview: LayoutSubview, size: CGSize)
+typealias SubviewWithSize = (subview: LayoutSubview, size: CGSize)
 
 public struct FlexHFlow: Layout {
     let alignment: HorizontalAlignment
@@ -18,6 +18,7 @@ public struct FlexHFlow: Layout {
         self.alignment = alignment
     }
 
+    // swiftlint:disable cyclomatic_complexity
     public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         //print("proposal in placeSubviews: \(proposal), bounds: \(bounds)")
         let layoutedSubviews = layoutSubviews(proposal: proposal, subviews: subviews)
@@ -76,6 +77,7 @@ public struct FlexHFlow: Layout {
             }
         }
     }
+    // swiftlint:enable cyclomatic_complexity
 
     public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let layoutedSubviews = layoutSubviews(proposal: proposal, subviews: subviews)
@@ -84,16 +86,16 @@ public struct FlexHFlow: Layout {
     }
 
     // regardless of alignment, row set should be always same.
-    func layoutSubviews(proposal: ProposedViewSize, subviews: Subviews) -> [[subviewWithSize]] {
+    func layoutSubviews(proposal: ProposedViewSize, subviews: Subviews) -> [[SubviewWithSize]] {
         if let layoutWidth = proposal.width,
            layoutWidth > 0 { // even proposal exists, width might be 0, in that case, let's use oneline
-            var layoutedSubviews: [[subviewWithSize]] = [] // [row][column]
+            var layoutedSubviews: [[SubviewWithSize]] = [] // [row][column]
             var currentRow = 0
             var currentRowWidth = 0.0
             var viewPairIterator = PairIterator(subviews)
             while let (currentSubview, nextSubview) = viewPairIterator.next() {
                 let currentSubviewSize = currentSubview.sizeThatFits(.unspecified)
-                var spacing:CGFloat = 0.0
+                var spacing: CGFloat = 0.0
                 if let nextSubview = nextSubview {
                     spacing = currentSubview.spacing.distance(to: nextSubview.spacing, along: .horizontal)
                 }
@@ -115,7 +117,7 @@ public struct FlexHFlow: Layout {
             return [oneLine]
         }
     }
-    func calcNecessarySize(_ layoutedSubviews: [[subviewWithSize]]) -> CGSize {
+    func calcNecessarySize(_ layoutedSubviews: [[SubviewWithSize]]) -> CGSize {
         var rowWidth = -1.0
         var height = 0.0
         for row in layoutedSubviews {
@@ -132,7 +134,7 @@ public struct FlexHFlow: Layout {
         return CGSize(width: rowWidth, height: height)
     }
 
-    func calcLineSize(_ row: [subviewWithSize]) -> CGSize {
+    func calcLineSize(_ row: [SubviewWithSize]) -> CGSize {
         let rowWidth = row.map({$0.1.width}).reduce(0.0, +)
         var rowSpacing = 0.0
         _ = row.indices.dropLast().map({
@@ -142,7 +144,7 @@ public struct FlexHFlow: Layout {
         return CGSize(width: rowWidth + rowSpacing, height: rowHeight)
     }
 
-    func spacingBetweenLine(current: [subviewWithSize], next: [subviewWithSize]) -> CGFloat {
+    func spacingBetweenLine(current: [SubviewWithSize], next: [SubviewWithSize]) -> CGFloat {
         return current[0].subview.spacing.distance(to: next[0].subview.spacing, along: .vertical)
     }
 

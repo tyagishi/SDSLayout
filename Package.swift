@@ -19,13 +19,16 @@ let package = Package(
         .package(url: "https://github.com/tyagishi/SDSFoundationExtension", from: "1.0.0"),
         .package(url: "https://github.com/tyagishi/SDSCGExtension", from: "1.3.0"),
         .package(url: "https://github.com/tyagishi/SDSSwiftExtension", from: "2.1.0"),
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.56.1"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "SDSLayout",
-            dependencies: ["SDSFoundationExtension", "SDSCGExtension", "SDSSwiftExtension"]),
+            dependencies: ["SDSFoundationExtension", "SDSCGExtension", "SDSSwiftExtension"],
+            plugins: [ .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins") ]
+        ),
         .testTarget(
             name: "SDSLayoutTests",
             dependencies: ["SDSLayout"]),

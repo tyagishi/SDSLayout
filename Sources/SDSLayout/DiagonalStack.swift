@@ -12,10 +12,9 @@ import SDSCGExtension
 import OSLog
 
 extension OSLog {
-    //static var dStack = Logger(subsystem: "com.smalldesksoftware.sdslayout", category: "diagonalstack")
+    // static var dStack = Logger(subsystem: "com.smalldesksoftware.sdslayout", category: "diagonalstack")
     static var dStack = Logger(.disabled)
 }
-
 
 extension ProposedViewSize: Hashable {
     public func hash(into hasher: inout Hasher) {
@@ -138,5 +137,3 @@ public struct DiagonalStack: Layout {
         }
     }
 }
-
-
