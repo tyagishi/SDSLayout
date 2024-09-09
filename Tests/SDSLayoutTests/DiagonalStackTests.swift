@@ -15,7 +15,7 @@ final class DiagonalStackTests: XCTestCase {
     func test_oneView() async throws {
         let sut = DiagonalStack()
         let view = sut {
-            Color.blue.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "blue30")
+            Color.blue.frame(width: 30, height: 30).layoutValue(key: LayoutDebugViewKey.self, value: "blue30")
         }
         let _ = ImageRenderer(content: view).nsImage
         
@@ -27,8 +27,8 @@ final class DiagonalStackTests: XCTestCase {
     func test_twoView_spacingPlus() async throws {
         let sut = DiagonalStack(hSpacing: 40, vSpacing: 40)
         let view = sut {
-            Color.blue.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "blue30")
-            Color.red.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "red30")
+            Color.blue.frame(width: 30, height: 30).layoutValue(key: LayoutDebugViewKey.self, value: "blue30")
+            Color.red.frame(width: 30, height: 30).layoutValue(key: LayoutDebugViewKey.self, value: "red30")
         }
         let _ = ImageRenderer(content: view).nsImage
         
@@ -41,8 +41,8 @@ final class DiagonalStackTests: XCTestCase {
     func test_twoView_spacingMinus() async throws {
         let sut = DiagonalStack(hSpacing: -20, vSpacing: -20)
         let view = sut {
-            Color.blue.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "blue30")
-            Color.red.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "red30")
+            Color.blue.frame(width: 30, height: 30).layoutValue(key: LayoutDebugViewKey.self, value: "blue30")
+            Color.red.frame(width: 30, height: 30).layoutValue(key: LayoutDebugViewKey.self, value: "red30")
         }
         let _ = ImageRenderer(content: view).nsImage
         
@@ -55,9 +55,9 @@ final class DiagonalStackTests: XCTestCase {
     func test_twoView_maxSpacingPlus() async throws {
         let sut = DiagonalStack(hSpacing: 20, vSpacing: 20, maxWidth: 100, maxHeight: 100)
         let view = sut {
-            Color.blue.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "blue30")
-            Color.red.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "red30")
-            Color.yellow.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "yellow30")
+            Color.blue.frame(width: 30, height: 30).layoutValue(key: LayoutDebugViewKey.self, value: "blue30")
+            Color.red.frame(width: 30, height: 30).layoutValue(key: LayoutDebugViewKey.self, value: "red30")
+            Color.yellow.frame(width: 30, height: 30).layoutValue(key: LayoutDebugViewKey.self, value: "yellow30")
         }
         let _ = ImageRenderer(content: view).nsImage
         
@@ -70,9 +70,9 @@ final class DiagonalStackTests: XCTestCase {
     func test_twoView_maxSpacingMinus() async throws {
         let sut = DiagonalStack(hSpacing: -10, vSpacing: -10, maxWidth: 50, maxHeight: 100)
         let view = sut {
-            Color.blue.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "blue30")
-            Color.red.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "red30")
-            Color.yellow.frame(width: 30, height: 30).layoutValue(key: LayoutInfo.self, value: "yellow30")
+            Color.blue.frame(width: 30, height: 30).layoutValue(key: LayoutDebugViewKey.self, value: "blue30")
+            Color.red.frame(width: 30, height: 30).layoutValue(key: LayoutDebugViewKey.self, value: "red30")
+            Color.yellow.frame(width: 30, height: 30).layoutValue(key: LayoutDebugViewKey.self, value: "yellow30")
         }
         let _ = ImageRenderer(content: view).nsImage
         

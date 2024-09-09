@@ -10,13 +10,13 @@ import SwiftUI
 @testable import SDSLayout
 
 @MainActor
-final class RatioHStackTests: XCTestCase {
+final class RatioHStackRatioTests: XCTestCase {
     func test_oneView() async throws {
-        let sut = RatioHStack()
+        let sut = RalativeHStack()
         let view = sut {
             Color.blue
-                .layoutValue(key: LayoutInfo.self, value: "blue30")
-                .layoutValue(key: LayoutRatioInfo.self, value: 1.0)
+                .layoutValue(key: LayoutDebugViewKey.self, value: "blue30")
+                .layoutValue(key: LayoutHRatio.self, value: .ratio(1.0))
         }.frame(width: 100, height: 100)
         let _ = ImageRenderer(content: view).nsImage
         
@@ -26,14 +26,14 @@ final class RatioHStackTests: XCTestCase {
     }
     
     func test_twoView() async throws {
-        let sut = RatioHStack()
+        let sut = RalativeHStack(hSpacing: 0)
         let view = sut {
             Color.blue
-                .layoutValue(key: LayoutInfo.self, value: "blue")
-                .layoutValue(key: LayoutRatioInfo.self, value: 1.0)
+                .layoutValue(key: LayoutDebugViewKey.self, value: "blue")
+                .layoutValue(key: LayoutHRatio.self, value: .ratio(1.0))
             Color.red
-                .layoutValue(key: LayoutInfo.self, value: "red")
-                .layoutValue(key: LayoutRatioInfo.self, value: 1.0)
+                .layoutValue(key: LayoutDebugViewKey.self, value: "red")
+                .layoutValue(key: LayoutHRatio.self, value: .ratio(1.0))
         }.frame(width: 100, height: 100)
         let _ = ImageRenderer(content: view).nsImage
         
@@ -43,17 +43,17 @@ final class RatioHStackTests: XCTestCase {
         XCTAssertEqual(sut.cache.locDic["red"], CGVector(dx: 50, dy: 0))
     }
     func test_threeView() async throws {
-        let sut = RatioHStack()
+        let sut = RalativeHStack(hSpacing: 0)
         let view = sut {
             Color.blue
-                .layoutValue(key: LayoutInfo.self, value: "blue")
-                .layoutValue(key: LayoutRatioInfo.self, value: 1.0)
+                .layoutValue(key: LayoutDebugViewKey.self, value: "blue")
+                .layoutValue(key: LayoutHRatio.self, value: .ratio(1.0))
             Color.red
-                .layoutValue(key: LayoutInfo.self, value: "red")
-                .layoutValue(key: LayoutRatioInfo.self, value: 2.0)
+                .layoutValue(key: LayoutDebugViewKey.self, value: "red")
+                .layoutValue(key: LayoutHRatio.self, value: .ratio(2.0))
             Color.green
-                .layoutValue(key: LayoutInfo.self, value: "green")
-                .layoutValue(key: LayoutRatioInfo.self, value: 1.0)
+                .layoutValue(key: LayoutDebugViewKey.self, value: "green")
+                .layoutValue(key: LayoutHRatio.self, value: .ratio(1.0))
         }.frame(width: 100, height: 100)
         let _ = ImageRenderer(content: view).nsImage
         
@@ -64,17 +64,17 @@ final class RatioHStackTests: XCTestCase {
         XCTAssertEqual(sut.cache.locDic["green"], CGVector(dx: 75, dy: 0))
     }
     func test_threeView_text() async throws {
-        let sut = RatioHStack()
+        let sut = RalativeHStack(hSpacing: 0)
         let view = sut {
             Color.blue
-                .layoutValue(key: LayoutInfo.self, value: "blue")
-                .layoutValue(key: LayoutRatioInfo.self, value: 1.0)
+                .layoutValue(key: LayoutDebugViewKey.self, value: "blue")
+                .layoutValue(key: LayoutHRatio.self, value: .ratio(1.0))
             Text("A")
-                .layoutValue(key: LayoutInfo.self, value: "red")
-                .layoutValue(key: LayoutRatioInfo.self, value: 2.0)
+                .layoutValue(key: LayoutDebugViewKey.self, value: "red")
+                .layoutValue(key: LayoutHRatio.self, value: .ratio(2.0))
             Color.green
-                .layoutValue(key: LayoutInfo.self, value: "green")
-                .layoutValue(key: LayoutRatioInfo.self, value: 1.0)
+                .layoutValue(key: LayoutDebugViewKey.self, value: "green")
+                .layoutValue(key: LayoutHRatio.self, value: .ratio(1.0))
         }.frame(width: 100, height: 100)
         let _ = ImageRenderer(content: view).nsImage
         

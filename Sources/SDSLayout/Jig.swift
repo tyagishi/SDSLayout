@@ -15,6 +15,6 @@ extension ProposedViewSize: Hashable {
     }
 }
 
-struct LayoutInfo: LayoutValueKey {
+struct LayoutDebugViewKey: LayoutValueKey {
     static let defaultValue: String = ""
 }

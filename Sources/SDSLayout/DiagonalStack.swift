@@ -84,7 +84,7 @@ public struct DiagonalStack: Layout {
     }
     
     public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout DiagonalStackCache) {
-        var pos: CGPoint = CGPoint(x: bounds.minX, y: bounds.minY)
+        let pos: CGPoint = CGPoint(x: bounds.minX, y: bounds.minY)
         var offset: CGVector = CGVector(dx: 0, dy: 0)
         var viewIterator = PairIterator(subviews)
 
@@ -92,8 +92,8 @@ public struct DiagonalStack: Layout {
 
         while let (current, next) = viewIterator.next() {
             current.place(at: pos + offset, anchor: .topLeading, proposal: proposal)
-            if current[LayoutInfo.self] != "" {
-                cache.locDic[current[LayoutInfo.self]] = offset
+            if current[LayoutDebugViewKey.self] != "" {
+                cache.locDic[current[LayoutDebugViewKey.self]] = offset
             }
          
             OSLog.dStack.debug("palce at \(pos.debugDescription)")
