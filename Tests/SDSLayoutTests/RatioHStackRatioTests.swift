@@ -12,7 +12,7 @@ import SwiftUI
 @MainActor
 final class RatioHStackRatioTests: XCTestCase {
     func test_oneView() async throws {
-        let sut = RalativeHStack()
+        let sut = RelativeHStack()
         let view = sut {
             Color.blue
                 .layoutValue(key: LayoutDebugViewKey.self, value: "blue30")
@@ -26,7 +26,7 @@ final class RatioHStackRatioTests: XCTestCase {
     }
     
     func test_twoView() async throws {
-        let sut = RalativeHStack(hSpacing: 0)
+        let sut = RelativeHStack(hSpacing: 0)
         let view = sut {
             Color.blue
                 .layoutValue(key: LayoutDebugViewKey.self, value: "blue")
@@ -43,7 +43,7 @@ final class RatioHStackRatioTests: XCTestCase {
         XCTAssertEqual(sut.cache.locDic["red"], CGVector(dx: 50, dy: 0))
     }
     func test_threeView() async throws {
-        let sut = RalativeHStack(hSpacing: 0)
+        let sut = RelativeHStack(hSpacing: 0)
         let view = sut {
             Color.blue
                 .layoutValue(key: LayoutDebugViewKey.self, value: "blue")
@@ -64,7 +64,7 @@ final class RatioHStackRatioTests: XCTestCase {
         XCTAssertEqual(sut.cache.locDic["green"], CGVector(dx: 75, dy: 0))
     }
     func test_threeView_text() async throws {
-        let sut = RalativeHStack(hSpacing: 0)
+        let sut = RelativeHStack(hSpacing: 0)
         let view = sut {
             Color.blue
                 .layoutValue(key: LayoutDebugViewKey.self, value: "blue")

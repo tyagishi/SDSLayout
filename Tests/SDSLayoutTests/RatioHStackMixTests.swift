@@ -12,7 +12,7 @@ import SwiftUI
 final class RatioHStackMixTests: XCTestCase {
     @MainActor
     func test_twoView_fixRatio() async throws {
-        let sut = RalativeHStack(hSpacing: 0)
+        let sut = RelativeHStack(hSpacing: 0)
         let view = sut {
             Color.blue
                 .layoutValue(key: LayoutDebugViewKey.self, value: "blue")
@@ -30,7 +30,7 @@ final class RatioHStackMixTests: XCTestCase {
     }
     @MainActor
     func test_twoView_ratioFix() async throws {
-        let sut = RalativeHStack(hSpacing: 0)
+        let sut = RelativeHStack(hSpacing: 0)
         let view = sut {
             Color.blue
                 .layoutValue(key: LayoutDebugViewKey.self, value: "blue")
@@ -49,7 +49,7 @@ final class RatioHStackMixTests: XCTestCase {
     
     @MainActor
     func test_twoView_ratioRatioFix() async throws {
-        let sut = RalativeHStack(hSpacing: 0)
+        let sut = RelativeHStack(hSpacing: 0)
         let view = sut {
             Color.blue
                 .layoutValue(key: LayoutDebugViewKey.self, value: "blue")
@@ -72,7 +72,7 @@ final class RatioHStackMixTests: XCTestCase {
     
     @MainActor
     func test_twoView_ratioFixRatioFix() async throws {
-        let sut = RalativeHStack(hSpacing: 0)
+        let sut = RelativeHStack(hSpacing: 0)
         let view = sut {
             Color.blue
                 .layoutValue(key: LayoutDebugViewKey.self, value: "blue")

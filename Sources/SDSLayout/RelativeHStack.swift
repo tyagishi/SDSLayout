@@ -54,7 +54,7 @@ struct LayoutHRatio: LayoutValueKey {
 ///  fix will be allocated first, then ratio will share the rest
 ///
 ///
-public struct RalativeHStack: Layout {
+public struct RelativeHStack: Layout {
     let hSpacing: CGFloat?
     
     var cache: DiagonalStackCache
