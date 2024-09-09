@@ -16,13 +16,13 @@ extension OSLog {
     static var log = Logger(.disabled)
 }
 
-enum RatioSpec {
+public enum RatioSpec {
     case ratio(_ value: CGFloat)
     case fix(_ point: CGFloat)
 }
 
-struct LayoutHRatio: LayoutValueKey {
-    static let defaultValue: RatioSpec = .ratio(1.0)
+public struct LayoutHRatio: LayoutValueKey {
+    public static let defaultValue: RatioSpec = .ratio(1.0)
 }
 
 /// layout along specified ratio / fixed size
