@@ -103,7 +103,7 @@ public struct RelativeHStack: Layout {
                 viewWidth = point
             }
             size.width += size.width + viewWidth
-            size.height = size.bigger(subviewSize).height
+            size.height = max(size.height, subviewSize.height)
         }
 
         var viewIterator = PairIterator(subviews)
@@ -211,13 +211,10 @@ public struct RelativeHStack: Layout {
     }
     
     func spacingBetween(_ lhs: LayoutSubview,_ rhs: LayoutSubview) -> CGFloat {
-        var spaceToNext: CGFloat
         if let hSpacing = hSpacing {
-            spaceToNext = hSpacing
-        } else {
-            spaceToNext = lhs.spacing.distance(to: rhs.spacing, along: .horizontal)
+            return hSpacing
         }
-        return spaceToNext
+        return lhs.spacing.distance(to: rhs.spacing, along: .horizontal)
     }
     
     func widthFor(_ subview: LayoutSubview,_ totalRatio: CGFloat,_ availableWidth: CGFloat,_ maxRatioOverPoint: CGFloat) -> CGFloat {
