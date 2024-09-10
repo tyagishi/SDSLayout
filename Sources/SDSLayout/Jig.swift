@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-extension ProposedViewSize: Hashable {
+extension ProposedViewSize: @retroactive Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(width)
         hasher.combine(height)

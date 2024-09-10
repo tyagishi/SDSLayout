@@ -67,6 +67,7 @@ public struct RelativeHStack: Layout {
     public class DiagonalStackCache {
         var sizeThatFit: [ProposedViewSize: CGSize] = [:]
         var locDic: [String: CGVector] = [:]
+        var proposal: [String: ProposedViewSize] = [:]
     }
     
     public typealias Cache = DiagonalStackCache
@@ -131,17 +132,20 @@ public struct RelativeHStack: Layout {
         var viewIterator = PairIterator(subviews)
         while let (current, next) = viewIterator.next() {
             //let currentRatio = current[LayoutRatioInfo.self]
-            current.place(at: pos + offset, anchor: .topLeading, proposal: proposal)
-            if current[LayoutDebugViewKey.self] != "" {
-                cache.locDic[current[LayoutDebugViewKey.self]] = offset
-            }
-            
             var viewWidth: CGFloat = 0
             if let ratio = ratio(for: current) {
                 viewWidth = ratio * maxCoeffRatioToPointValue
             } else if let point = fix(for: current) {
                 viewWidth = point
             }
+
+            let proposalForCurrent = ProposedViewSize(width: viewWidth, height: proposal.replacingUnspecifiedDimensions().height)
+            current.place(at: pos + offset, anchor: .topLeading, proposal: proposalForCurrent)
+            if current[LayoutDebugViewKey.self] != "" {
+                cache.locDic[current[LayoutDebugViewKey.self]] = offset
+                cache.proposal[current[LayoutDebugViewKey.self]] = proposalForCurrent
+            }
+            
             offset.dx += viewWidth
 
             if let next = next {
@@ -156,10 +160,6 @@ public struct RelativeHStack: Layout {
     func maxCoeffRatioToPoint(_ subviews: Subviews, proposal: ProposedViewSize, availableWidth: CGFloat) -> CGFloat { // 1% = return point
         var maxValue: CGFloat = 0
         
-        let (totalRatio, totalPoint) = totalRaioPoint(subviews)
-        
-        let availableWidthForRatio = availableWidth - totalPoint
-
         for subview in subviews {
             guard let ratio = ratio(for: subview) else { continue }
             let subviewSize = subview.sizeThatFits(proposal)
@@ -182,7 +182,7 @@ public struct RelativeHStack: Layout {
 
     func fix(for subview: LayoutSubview) -> CGFloat? {
         switch subview[LayoutHRatio.self] {
-        case .ratio(let ratio):
+        case .ratio:
             return nil
         case .fix(let point):
             return point

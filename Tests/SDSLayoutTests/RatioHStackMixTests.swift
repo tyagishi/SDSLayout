@@ -26,7 +26,9 @@ final class RatioHStackMixTests: XCTestCase {
         XCTAssertEqual(sut.cache.sizeThatFit[ProposedViewSize(width: 100, height: 100)], CGSize(width: 100, height: 100))
         
         XCTAssertEqual(sut.cache.locDic["blue"], CGVector(dx: 0, dy: 0))
+        XCTAssertEqual(sut.cache.proposal["blue"], ProposedViewSize(width: 30, height: 100))
         XCTAssertEqual(sut.cache.locDic["red"], CGVector(dx: 30, dy: 0))
+        XCTAssertEqual(sut.cache.proposal["red"], ProposedViewSize(width: 70, height: 100))
     }
     @MainActor
     func test_twoView_ratioFix() async throws {
@@ -44,7 +46,9 @@ final class RatioHStackMixTests: XCTestCase {
         XCTAssertEqual(sut.cache.sizeThatFit[ProposedViewSize(width: 100, height: 100)], CGSize(width: 100, height: 100))
         
         XCTAssertEqual(sut.cache.locDic["blue"], CGVector(dx: 0, dy: 0))
+        XCTAssertEqual(sut.cache.proposal["blue"], ProposedViewSize(width: 70, height: 100))
         XCTAssertEqual(sut.cache.locDic["red"], CGVector(dx: 70, dy: 0))
+        XCTAssertEqual(sut.cache.proposal["red"], ProposedViewSize(width: 30, height: 100))
     }
     
     @MainActor
@@ -66,8 +70,11 @@ final class RatioHStackMixTests: XCTestCase {
         XCTAssertEqual(sut.cache.sizeThatFit[ProposedViewSize(width: 100, height: 100)], CGSize(width: 100, height: 100))
         
         XCTAssertEqual(sut.cache.locDic["blue"], CGVector(dx: 0, dy: 0))
+        XCTAssertEqual(sut.cache.proposal["blue"], ProposedViewSize(width: 35, height: 100))
         XCTAssertEqual(sut.cache.locDic["yellow"], CGVector(dx: 35, dy: 0))
+        XCTAssertEqual(sut.cache.proposal["yellow"], ProposedViewSize(width: 35, height: 100))
         XCTAssertEqual(sut.cache.locDic["red"], CGVector(dx: 70, dy: 0))
+        XCTAssertEqual(sut.cache.proposal["red"], ProposedViewSize(width: 30, height: 100))
     }
     
     @MainActor
@@ -92,9 +99,13 @@ final class RatioHStackMixTests: XCTestCase {
         XCTAssertEqual(sut.cache.sizeThatFit[ProposedViewSize(width: 100, height: 100)], CGSize(width: 100, height: 100))
         
         XCTAssertEqual(sut.cache.locDic["blue"], CGVector(dx: 0, dy: 0))
+        XCTAssertEqual(sut.cache.proposal["blue"], ProposedViewSize(width: 20, height: 100))
         XCTAssertEqual(sut.cache.locDic["yellow"], CGVector(dx: 20, dy: 0))
+        XCTAssertEqual(sut.cache.proposal["yellow"], ProposedViewSize(width: 20, height: 100))
         XCTAssertEqual(sut.cache.locDic["red"], CGVector(dx: 40, dy: 0))
+        XCTAssertEqual(sut.cache.proposal["red"], ProposedViewSize(width: 30, height: 100))
         XCTAssertEqual(sut.cache.locDic["green"], CGVector(dx: 70, dy: 0))
+        XCTAssertEqual(sut.cache.proposal["green"], ProposedViewSize(width: 30, height: 100))
     }
 
 }
