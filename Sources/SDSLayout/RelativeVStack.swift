@@ -49,7 +49,7 @@ public struct LayoutVRatio: LayoutValueKey {
 ///  fix will be allocated first, then ratio will share the rest
 ///
 ///
-public struct RelativeVStack: LayoutSDSProtocol {
+public struct RelativeVStack: SpacableLayout {
     let vSpacing: CGFloat?
     
     var cache: Cache

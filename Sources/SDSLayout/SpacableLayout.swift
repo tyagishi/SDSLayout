@@ -8,12 +8,12 @@
 import SwiftUI
 import SDSSwiftExtension
 
-protocol LayoutSDSProtocol: Layout {
+protocol SpacableLayout: Layout {
     var hSpacing: CGFloat? { get }
     var vSpacing: CGFloat? { get }
 }
 
-extension LayoutSDSProtocol {
+extension SpacableLayout {
     public var hSpacing: CGFloat? { return nil }
     public var vSpacing: CGFloat? { return nil }
 
