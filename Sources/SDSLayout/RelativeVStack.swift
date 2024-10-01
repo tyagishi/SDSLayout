@@ -1,7 +1,7 @@
 //
-//  RatioHStack.swift
+//  LayoutVRatio.swift
 //
-//  Created by : Tomoaki Yagishita on 2024/08/21
+//  Created by : Tomoaki Yagishita on 2024/10/01
 //  © 2024  SmallDeskSoftware
 //
 
@@ -12,65 +12,60 @@ import SDSSwiftExtension
 import SDSCGExtension
 
 extension OSLog {
-    // static var log = Logger(subsystem: "com.smalldesksoftware.sdslayout", category: "RatioHStack")
+    // static var log = Logger(subsystem: "com.smalldesksoftware.sdslayout", category: "RelativeVStack")
     fileprivate static var log = Logger(.disabled)
 }
 
-public enum RatioSpec {
-    case ratio(_ value: CGFloat)
-    case fix(_ point: CGFloat)
-}
-
-public struct LayoutHRatio: LayoutValueKey {
+public struct LayoutVRatio: LayoutValueKey {
     public static let defaultValue: RatioSpec = .ratio(1.0)
 }
 
 /// layout along specified ratio / fixed size
 ///  ```
-///  RalativeHStack {
+///  RalativeVStack {
 ///     Color1.layoutValue(key: LayoutRatioInfo.self, .ratio(1))
 ///     Color2.layoutValue(key: LayoutRatioInfo.self, .ratio(2))
 ///  }
 ///  ```
-///   will layout Color1 with 1/3 width, Color2 with 2/3 width
+///   will layout Color1 with 1/3 height, Color2 with 2/3 height
 ///   basically same with
 ///   ```
 ///   HStack {
 ///     GeometryReader { geomProxy in
-///       Color1.frame(width: geomProxy.size.width / 3.0)
-///       Color2.frame(width: geomProxy.size.width * 2.0 / 3.0)
+///       Color1.frame(height: geomProxy.size.height / 3.0)
+///       Color2.frame(height: geomProxy.size.height * 2.0 / 3.0)
 ///     }
 ///   }
 ///   ```
 ///  you can specify fixed size
 ///  ```
-///  RalativeHStack {
+///  RalativeVStack {
 ///     Color1.layoutValue(key: LayoutRatioInfo.self, .fix(30))
 ///     Color2.layoutValue(key: LayoutRatioInfo.self, .ratio(1))
 ///     Color3.layoutValue(key: LayoutRatioInfo.self, .ratio(1))
 ///  }
 ///  ```
-///  then Color1 will have fixed 30pt width, then Color2 and Color3 share the rest space 1:1
+///  then Color1 will have fixed 30pt height, then Color2 and Color3 share the rest space 1:1
 ///  fix will be allocated first, then ratio will share the rest
 ///
 ///
-public struct RelativeHStack: LayoutSDSProtocol {
-    let hSpacing: CGFloat?
+public struct RelativeVStack: LayoutSDSProtocol {
+    let vSpacing: CGFloat?
     
     var cache: Cache
     
-    public init(hSpacing: CGFloat? = nil) {
-        self.hSpacing = hSpacing
-        self.cache = Cache()
+    public init(vSpacing: CGFloat? = nil) {
+        self.vSpacing = vSpacing
+        self.cache = RelativeVStackCache()
     }
     
-    public class RelativeHStackCache {
+    public class RelativeVStackCache {
         var sizeThatFit: [ProposedViewSize: CGSize] = [:]
         var locDic: [String: CGVector] = [:]
         var proposal: [String: ProposedViewSize] = [:]
     }
     
-    public typealias Cache = RelativeHStackCache
+    public typealias Cache = RelativeVStackCache
     public func makeCache(subviews: Subviews) -> Cache {
         return self.cache
     }
@@ -88,7 +83,7 @@ public struct RelativeHStack: LayoutSDSProtocol {
         }
 
         let (totalRatio, totalPoint) = totalRaioPoint(subviews)
-        let spacingInTotal = totalSpacing(subviews, along: .horizontal)
+        let spacingInTotal = totalSpacing(subviews, along: .vertical)
         let availableSpaceForRatio = proposal.replacingUnspecifiedDimensions().height - totalPoint - spacingInTotal
 
         // try to find max Coeff which convert ratio to Point, ex: 20% = 340 point -> 1% = 17 point (i.e. coeff = 17)
@@ -98,21 +93,21 @@ public struct RelativeHStack: LayoutSDSProtocol {
         var size: CGSize = .zero
         subviews.forEach { subview in
             let subviewSize = subview.sizeThatFits(proposal)
-            var viewWidth = subviewSize.width
+            var viewHeight = subviewSize.height
             if let ratio = ratio(for: subview) {
-                viewWidth = ratio * maxCoeffRatioToPointValue
+                viewHeight = ratio * maxCoeffRatioToPointValue
             } else if let point = fix(for: subview) {
-                viewWidth = point
+                viewHeight = point
             }
-            size.width += size.width + viewWidth
-            size.height = max(size.height, subviewSize.height)
+            size.width = max(size.width, subviewSize.width)
+            size.height += size.height + viewHeight
         }
 
         var viewIterator = PairIterator(subviews)
         while let (current, next) = viewIterator.next() {
             guard let next = next else { continue }
-            let spaceToNext = spacingBetween(current, next, along: .horizontal)
-            size.width += spaceToNext
+            let spaceToNext = spacingBetween(current, next, along: .vertical)
+            size.height += spaceToNext
         }
         
         cache.sizeThatFit[proposal] = size
@@ -124,8 +119,9 @@ public struct RelativeHStack: LayoutSDSProtocol {
         var offset: CGVector = CGVector(dx: 0, dy: 0)
 
         let (totalRatio, totalPoint) = totalRaioPoint(subviews)
-        let availableSpaceForRatio = proposal.replacingUnspecifiedDimensions().width - totalPoint
-
+        let spacingInTotal = totalSpacing(subviews, along: .vertical)
+        let availableSpaceForRatio = proposal.replacingUnspecifiedDimensions().height - totalPoint - spacingInTotal
+        
         // try to find max Coeff which convert ratio to Point, ex: 20% = 340 point -> 1% = 17 point (i.e. coeff = 17)
         //    iff 20%=340Point, 10%=300Point, use 1%=30Point (coeff = 30)
         let maxCoeffRatioToPointValue = availableSpaceForRatio / totalRatio
@@ -133,25 +129,26 @@ public struct RelativeHStack: LayoutSDSProtocol {
         var viewIterator = PairIterator(subviews)
         while let (current, next) = viewIterator.next() {
             //let currentRatio = current[LayoutRatioInfo.self]
-            var viewWidth: CGFloat = 0
+            var viewHeight: CGFloat = 0
             if let ratio = ratio(for: current) {
-                viewWidth = ratio * maxCoeffRatioToPointValue
+                viewHeight = ratio * maxCoeffRatioToPointValue
             } else if let point = fix(for: current) {
-                viewWidth = point
+                viewHeight = point
             }
 
-            let proposalForCurrent = ProposedViewSize(width: viewWidth, height: proposal.replacingUnspecifiedDimensions().height)
-            current.place(at: pos.move(offset), anchor: .topLeading, proposal: proposalForCurrent)
+            let proposalForCurrent = ProposedViewSize(width: bounds.width, height: viewHeight)
+            let centerVector = CGVector(dx: bounds.width / 2.0, dy: viewHeight / 2.0)
+            current.place(at: pos.move(offset).move(centerVector), anchor: .center, proposal: proposalForCurrent)
             if current[LayoutDebugViewKey.self] != "" {
                 cache.locDic[current[LayoutDebugViewKey.self]] = offset
                 cache.proposal[current[LayoutDebugViewKey.self]] = proposalForCurrent
             }
             
-            offset.dx += viewWidth
+            offset.dy += viewHeight
 
             if let next = next {
-                let spacing = spacingBetween(current, next, along: .horizontal)
-                offset.dx += spacing
+                let spacing = spacingBetween(current, next, along: .vertical)
+                offset.dy += spacing
             }
             OSLog.dStack.debug("palce at \(pos.debugDescription)")
         }

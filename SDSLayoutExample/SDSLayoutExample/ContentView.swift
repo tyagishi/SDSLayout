@@ -25,6 +25,18 @@ struct ContentView: View {
                     .border(.blue)
             }
             Color.yellow
+            RelativeVStack(vSpacing: 0) {
+                Text("Hello, world a little bit tall!").font(.largeTitle)
+                    //.frame(maxWidth: .infinity, alignment: .center)
+                    .layoutValue(key: LayoutVRatio.self, value: .ratio(0.5))
+                    .border(.red)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .border(.yellow)
+                Text("Hello, world!")
+                    //.frame(maxWidth: .infinity, alignment: .center)
+                    .layoutValue(key: LayoutVRatio.self, value: .ratio(0.5))
+                    .border(.blue)
+            }.border(.green)
         }
         .padding()
     }
@@ -33,3 +45,4 @@ struct ContentView: View {
 #Preview {
     ContentView()
 }
+

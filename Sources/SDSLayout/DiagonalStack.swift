@@ -22,7 +22,7 @@ public struct DiagonalStack: Layout {
     let maxWidth: CGFloat?
     let maxHeight: CGFloat?
     
-    var cache: DiagonalStackCache
+    var cache: Cache
     
     public init(hSpacing: CGFloat? = nil, vSpacing: CGFloat? = nil,
                 maxWidth: CGFloat? = nil, maxHeight: CGFloat? = nil) {
@@ -30,7 +30,7 @@ public struct DiagonalStack: Layout {
         self.vSpacing = vSpacing
         self.maxWidth = maxWidth
         self.maxHeight = maxHeight
-        self.cache = DiagonalStackCache()
+        self.cache = Cache()
     }
     
     public class DiagonalStackCache {
@@ -39,11 +39,11 @@ public struct DiagonalStack: Layout {
     }
     
     public typealias Cache = DiagonalStackCache
-    public func makeCache(subviews: Subviews) -> DiagonalStackCache {
+    public func makeCache(subviews: Subviews) -> Cache {
         return self.cache
     }
 
-    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout DiagonalStackCache) -> CGSize {
+    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
         var overAllSize: CGSize = .zero
         var viewIterator = PairIterator(subviews)
         
@@ -83,7 +83,7 @@ public struct DiagonalStack: Layout {
         return overAllSize
     }
     
-    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout DiagonalStackCache) {
+    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) {
         let pos: CGPoint = CGPoint(x: bounds.minX, y: bounds.minY)
         var offset: CGVector = CGVector(dx: 0, dy: 0)
         var viewIterator = PairIterator(subviews)
@@ -91,7 +91,7 @@ public struct DiagonalStack: Layout {
         let maxOffset = CGVector(dx: maxWidth ?? .infinity, dy: maxHeight ?? .infinity)
 
         while let (current, next) = viewIterator.next() {
-            current.place(at: pos + offset, anchor: .topLeading, proposal: proposal)
+            current.place(at: pos.move(offset), anchor: .topLeading, proposal: proposal)
             if current[LayoutDebugViewKey.self] != "" {
                 cache.locDic[current[LayoutDebugViewKey.self]] = offset
             }
