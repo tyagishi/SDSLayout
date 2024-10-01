@@ -170,7 +170,7 @@ public struct RelativeVStack: LayoutSDSProtocol {
     
     // common
     func ratio(for subview: LayoutSubview) -> CGFloat? {
-        switch subview[LayoutHRatio.self] {
+        switch subview[LayoutVRatio.self] {
         case .ratio(let ratio):
             return ratio
         case .fix:
@@ -179,7 +179,7 @@ public struct RelativeVStack: LayoutSDSProtocol {
     }
 
     func fix(for subview: LayoutSubview) -> CGFloat? {
-        switch subview[LayoutHRatio.self] {
+        switch subview[LayoutVRatio.self] {
         case .ratio:
             return nil
         case .fix(let point):
@@ -189,7 +189,7 @@ public struct RelativeVStack: LayoutSDSProtocol {
 
     func totalRaioPoint(_ subviews: Subviews) -> (totalRatio: CGFloat, totalPoint: CGFloat) {
         let totalRatio: CGFloat = subviews.reduce(0.0) { partialResult, subview in
-            switch subview[LayoutHRatio.self] {
+            switch subview[LayoutVRatio.self] {
             case .ratio(let ratio):
                 return partialResult + ratio
             case .fix:
@@ -198,7 +198,7 @@ public struct RelativeVStack: LayoutSDSProtocol {
         }
 
         let totalFix: CGFloat = subviews.reduce(0.0) { partialResult, subview in
-            switch subview[LayoutHRatio.self] {
+            switch subview[LayoutVRatio.self] {
             case .ratio:
                 return partialResult
             case .fix(let point):
