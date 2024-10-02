@@ -140,8 +140,9 @@ public struct RelativeHStack: SpacableLayout {
                 viewWidth = point
             }
 
-            let proposalForCurrent = ProposedViewSize(width: viewWidth, height: proposal.replacingUnspecifiedDimensions().height)
-            current.place(at: pos.move(offset), anchor: .topLeading, proposal: proposalForCurrent)
+            let proposalForCurrent = ProposedViewSize(width: viewWidth, height: bounds.height)
+            let centerVector = CGVector(dx: viewWidth / 2.0, dy: bounds.height / 2.0)
+            current.place(at: pos.move(offset).move(centerVector), anchor: .center, proposal: proposalForCurrent)
             if current[LayoutDebugViewKey.self] != "" {
                 cache.locDic[current[LayoutDebugViewKey.self]] = offset
                 cache.proposal[current[LayoutDebugViewKey.self]] = proposalForCurrent

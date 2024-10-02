@@ -9,6 +9,7 @@ import SwiftUI
 import SDSLayout
 
 struct ContentView: View {
+    @State private var showGuide = false
     var body: some View {
         VStack {
             RelativeHStack(hSpacing: 0) {

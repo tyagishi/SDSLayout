@@ -1,6 +1,33 @@
 # SDSLayout
 custom layouts which conform to SwiftUI.Layout
 
+## RelativeHStack/ RelativeVStack
+Width/Height control with available space ratio or fixed points
+
+```
+struct ContentView: View {
+    var body: some View {
+        VStack {
+            RelativeHStack(hSpacing: 0) {
+                Text("Hello, world!").font(.largeTitle)
+                .layoutValue(key: LayoutHRatio.self, value: .ratio(0.7))
+                Color.white
+                    .layoutValue(key: LayoutHRatio.self, value: .fix(100))
+                Text("Hello, world!")
+                    .layoutValue(key: LayoutHRatio.self, value: .ratio(0.3))
+            }
+            RelativeVStack(vSpacing: 0) {
+                Text("Hello, world largeTitle!").font(.largeTitle)
+                    .layoutValue(key: LayoutVRatio.self, value: .ratio(0.5))
+                Text("Hello, world body!")
+                    .layoutValue(key: LayoutVRatio.self, value: .ratio(0.5))
+            }.border(.green)
+        }
+        .padding()
+    }
+}
+```
+
 ## FlexHFlow
 horizontal flow layout
 
