@@ -17,7 +17,7 @@ extension OSLog {
 }
 
 public struct LayoutVRatio: LayoutValueKey {
-    public static let defaultValue: RatioSpec = .ratio(1.0)
+    public static let defaultValue: RatioSpec = .natural
 }
 
 /// layout along specified ratio / fixed size
@@ -82,7 +82,7 @@ public struct RelativeVStack: SpacableLayout {
             return proposal.replacingUnspecifiedDimensions()
         }
 
-        let (totalRatio, totalPoint) = totalRaioPoint(subviews)
+        let (totalRatio, totalPoint) = totalRaioPoint(subviews, proposal: proposal)
         let spacingInTotal = totalSpacing(subviews, along: .vertical)
         let availableSpaceForRatio = proposal.replacingUnspecifiedDimensions().height - totalPoint - spacingInTotal
 
@@ -94,10 +94,13 @@ public struct RelativeVStack: SpacableLayout {
         subviews.forEach { subview in
             let subviewSize = subview.sizeThatFits(proposal)
             var viewHeight = subviewSize.height
-            if let ratio = ratio(for: subview) {
+            switch subview[LayoutVRatio.self] {
+            case .ratio(let ratio):
                 viewHeight = ratio * maxCoeffRatioToPointValue
-            } else if let point = fix(for: subview) {
+            case .fix(let point):
                 viewHeight = point
+            case .natural:
+                viewHeight = subviewSize.height
             }
             size.width = max(size.width, subviewSize.width)
             size.height += size.height + viewHeight
@@ -118,7 +121,7 @@ public struct RelativeVStack: SpacableLayout {
         let pos: CGPoint = CGPoint(x: bounds.minX, y: bounds.minY)
         var offset: CGVector = CGVector(dx: 0, dy: 0)
 
-        let (totalRatio, totalPoint) = totalRaioPoint(subviews)
+        let (totalRatio, totalPoint) = totalRaioPoint(subviews, proposal: proposal)
         let spacingInTotal = totalSpacing(subviews, along: .vertical)
         let availableSpaceForRatio = proposal.replacingUnspecifiedDimensions().height - totalPoint - spacingInTotal
         
@@ -129,11 +132,15 @@ public struct RelativeVStack: SpacableLayout {
         var viewIterator = PairIterator(subviews)
         while let (current, next) = viewIterator.next() {
             //let currentRatio = current[LayoutRatioInfo.self]
+            let subviewSize = current.sizeThatFits(proposal)
             var viewHeight: CGFloat = 0
-            if let ratio = ratio(for: current) {
+            switch current[LayoutVRatio.self] {
+            case .ratio(let ratio):
                 viewHeight = ratio * maxCoeffRatioToPointValue
-            } else if let point = fix(for: current) {
+            case .fix(let point):
                 viewHeight = point
+            case .natural:
+                viewHeight = subviewSize.height
             }
 
             let proposalForCurrent = ProposedViewSize(width: bounds.width, height: viewHeight)
@@ -173,26 +180,35 @@ public struct RelativeVStack: SpacableLayout {
         switch subview[LayoutVRatio.self] {
         case .ratio(let ratio):
             return ratio
-        case .fix:
+        default:
             return nil
         }
     }
 
     func fix(for subview: LayoutSubview) -> CGFloat? {
         switch subview[LayoutVRatio.self] {
-        case .ratio:
-            return nil
         case .fix(let point):
             return point
+        default:
+            return nil
         }
     }
 
-    func totalRaioPoint(_ subviews: Subviews) -> (totalRatio: CGFloat, totalPoint: CGFloat) {
+    func natural(for subview: LayoutSubview, proposal: ProposedViewSize) -> CGFloat? {
+        switch subview[LayoutVRatio.self] {
+        case .natural:
+            return subview.sizeThatFits(proposal).height
+        default:
+            return nil
+        }
+    }
+    
+    func totalRaioPoint(_ subviews: Subviews, proposal: ProposedViewSize) -> (totalRatio: CGFloat, totalPoint: CGFloat) {
         let totalRatio: CGFloat = subviews.reduce(0.0) { partialResult, subview in
             switch subview[LayoutVRatio.self] {
             case .ratio(let ratio):
                 return partialResult + ratio
-            case .fix:
+            case .fix, .natural:
                 return partialResult
             }
         }
@@ -203,6 +219,8 @@ public struct RelativeVStack: SpacableLayout {
                 return partialResult
             case .fix(let point):
                 return partialResult + point
+            case .natural:
+                return partialResult + subview.sizeThatFits(proposal).height
             }
         }
         return (totalRatio, totalFix)

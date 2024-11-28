@@ -19,10 +19,11 @@ extension OSLog {
 public enum RatioSpec {
     case ratio(_ value: CGFloat)
     case fix(_ point: CGFloat)
+    case natural
 }
 
 public struct LayoutHRatio: LayoutValueKey {
-    public static let defaultValue: RatioSpec = .ratio(1.0)
+    public static let defaultValue: RatioSpec = .natural
 }
 
 /// layout along specified ratio / fixed size
@@ -87,7 +88,7 @@ public struct RelativeHStack: SpacableLayout {
             return proposal.replacingUnspecifiedDimensions()
         }
 
-        let (totalRatio, totalPoint) = totalRaioPoint(subviews)
+        let (totalRatio, totalPoint) = totalRaioPoint(subviews, proposal: proposal)
         let spacingInTotal = totalSpacing(subviews, along: .horizontal)
         let availableSpaceForRatio = proposal.replacingUnspecifiedDimensions().height - totalPoint - spacingInTotal
 
@@ -99,10 +100,13 @@ public struct RelativeHStack: SpacableLayout {
         subviews.forEach { subview in
             let subviewSize = subview.sizeThatFits(proposal)
             var viewWidth = subviewSize.width
-            if let ratio = ratio(for: subview) {
-                viewWidth = ratio * maxCoeffRatioToPointValue
-            } else if let point = fix(for: subview) {
+            switch subview[LayoutHRatio.self] {
+            case .fix(let point):
                 viewWidth = point
+            case .ratio(let ratio):
+                viewWidth = ratio * maxCoeffRatioToPointValue
+            case .natural:
+                viewWidth = subviewSize.width
             }
             size.width += size.width + viewWidth
             size.height = max(size.height, subviewSize.height)
@@ -123,7 +127,7 @@ public struct RelativeHStack: SpacableLayout {
         let pos: CGPoint = CGPoint(x: bounds.minX, y: bounds.minY)
         var offset: CGVector = CGVector(dx: 0, dy: 0)
 
-        let (totalRatio, totalPoint) = totalRaioPoint(subviews)
+        let (totalRatio, totalPoint) = totalRaioPoint(subviews, proposal: proposal)
         let availableSpaceForRatio = proposal.replacingUnspecifiedDimensions().width - totalPoint
 
         // try to find max Coeff which convert ratio to Point, ex: 20% = 340 point -> 1% = 17 point (i.e. coeff = 17)
@@ -138,6 +142,8 @@ public struct RelativeHStack: SpacableLayout {
                 viewWidth = ratio * maxCoeffRatioToPointValue
             } else if let point = fix(for: current) {
                 viewWidth = point
+            } else if let width = natural(for: current, proposal: proposal) {
+                viewWidth = width
             }
 
             let proposalForCurrent = ProposedViewSize(width: viewWidth, height: bounds.height)
@@ -177,26 +183,35 @@ public struct RelativeHStack: SpacableLayout {
         switch subview[LayoutHRatio.self] {
         case .ratio(let ratio):
             return ratio
-        case .fix:
+        default:
             return nil
         }
     }
 
     func fix(for subview: LayoutSubview) -> CGFloat? {
         switch subview[LayoutHRatio.self] {
-        case .ratio:
-            return nil
         case .fix(let point):
             return point
+        default:
+            return nil
         }
     }
 
-    func totalRaioPoint(_ subviews: Subviews) -> (totalRatio: CGFloat, totalPoint: CGFloat) {
+    func natural(for subview: LayoutSubview, proposal: ProposedViewSize) -> CGFloat? {
+        switch subview[LayoutHRatio.self] {
+        case .natural:
+            return subview.sizeThatFits(proposal).width
+        default:
+            return nil
+        }
+    }
+    
+    func totalRaioPoint(_ subviews: Subviews, proposal: ProposedViewSize) -> (totalRatio: CGFloat, totalPoint: CGFloat) {
         let totalRatio: CGFloat = subviews.reduce(0.0) { partialResult, subview in
             switch subview[LayoutHRatio.self] {
             case .ratio(let ratio):
                 return partialResult + ratio
-            case .fix:
+            default:
                 return partialResult
             }
         }
@@ -207,6 +222,8 @@ public struct RelativeHStack: SpacableLayout {
                 return partialResult
             case .fix(let point):
                 return partialResult + point
+            case .natural:
+                return partialResult + subview.sizeThatFits(proposal).width
             }
         }
         return (totalRatio, totalFix)
