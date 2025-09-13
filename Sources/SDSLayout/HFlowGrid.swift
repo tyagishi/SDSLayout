@@ -10,12 +10,15 @@ import SDSSwiftExtension
 
 public struct HFlowGrid: SpacableLayout {
     let rowItemNum: Int
+    let initialPadding: Int
     public var hSpacing: CGFloat? = 0
     public var vSpacing: CGFloat? = 0
 
-    public init(num: Int, hSpacing: CGFloat = 0, vSpacing: CGFloat = 0) {
+    public init(num: Int, initialPadding: Int = 0, hSpacing: CGFloat = 0, vSpacing: CGFloat = 0) {
         guard num > 0 else { fatalError("HFlowGrid: num must be greater than 0") }
+        guard initialPadding < num else { fatalError("invalid initialPadding value")}
         self.rowItemNum = num
+        self.initialPadding = initialPadding
         self.hSpacing = hSpacing
         self.vSpacing = vSpacing
     }
@@ -24,7 +27,7 @@ public struct HFlowGrid: SpacableLayout {
         // basically each item should be calced based on ideal size
         let itemMaxSize = subviews.map({ $0.sizeThatFits(.unspecified) }).reduce(CGSize.zero, {(result, size) in result.bigger(size) })
         let width = itemMaxSize.width * CGFloat(rowItemNum) + (hSpacing ?? 0) * (CGFloat(rowItemNum) - 1)
-        let columnItemNum = Int((subviews.count-1) / rowItemNum) + 1
+        let columnItemNum = Int((subviews.count-1+initialPadding) / rowItemNum) + 1
         let height = itemMaxSize.height * CGFloat(columnItemNum) + (vSpacing ?? 0) * (CGFloat(columnItemNum) - 1)
         return CGSize(width: width, height: height)
     }
@@ -32,9 +35,9 @@ public struct HFlowGrid: SpacableLayout {
     public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         let itemMaxSize = subviews.map({ $0.sizeThatFits(.unspecified) }).reduce(CGSize.zero, {(result, size) in result.bigger(size) })
 
-        var posX = bounds.minX
+        var posX = bounds.minX + (itemMaxSize.width + (hSpacing ?? 0)) * CGFloat(initialPadding)
         var posY = bounds.minY
-        var rowIndex = 0
+        var rowIndex = initialPadding
         
         for subview in subviews {
             subview.place(at: CGPoint(x: posX, y: posY), anchor: .topLeading, proposal: proposal)
