@@ -8,9 +8,103 @@
 import SwiftUI
 import SDSLayout
 
+enum DemoLayoutType: String, RawRepresentable, CaseIterable {
+    case relative
+    case radial
+    case flexHFlow
+    case hFlowGrid
+}
+extension Color {
+    // standard color except .clear.white
+    static var standardColors: [Color] {
+        [.black, .blue, .brown, .cyan, .gray, .green, .indigo, .mint, .orange, .pink, .red, .teal, .yellow]
+    }
+}
 struct ContentView: View {
     @State private var showGuide = false
+    @State private var demoLayout = DemoLayoutType.hFlowGrid
+    
     var body: some View {
+        NavigationSplitView(sidebar: {
+            List(selection: $demoLayout, content: {
+                ForEach(DemoLayoutType.allCases, id: \.self) { layout in
+                    Text(layout.rawValue).tag(layout)
+                }
+            })
+        }, detail: {
+            switch demoLayout {
+            case .relative: relativeLayout
+            case .radial: radialLayout
+            case .flexHFlow: flexHFlowLayout
+            case .hFlowGrid: hFlowGrid
+            //default: Text("Not prepared")
+            }
+        })
+    }
+    
+    @ViewBuilder
+    var hFlowGrid: some View {
+        HFlowGrid(num: 5, hSpacing: 5, vSpacing: 20) {
+            ForEach(1..<23, id: \.self) { value in
+                Color.standardColors[loop: value]
+                    .frame(width: 50, height: 50)
+                    .overlay {
+                        Text(value.formatted())
+                            .foregroundStyle(Color.standardColors[loop: value] == .black ? .white: .black)
+                    }
+            }
+        }
+        .padding(5)
+        .border(.green, width: 5)
+    }
+
+    @ViewBuilder
+    var flexHFlowLayout: some View {
+        FlexHFlow(alignment: .center) {
+            ForEach((1000..<1005), id: \.self) { value in
+                Text(value.formatted()).font(.largeTitle)
+            }
+        }.sizeConstraint(.horizontal).border(.red)
+        FlexHFlow(alignment: .leading) {
+            ForEach((1000..<1005), id: \.self) { value in
+                Text(value.formatted()).font(.largeTitle)
+            }
+        }.sizeConstraint(.horizontal).border(.green)
+        FlexHFlow(alignment: .trailing) {
+            ForEach((1000..<1005), id: \.self) { value in
+                Text(value.formatted()).font(.largeTitle)
+            }
+        }.sizeConstraint(.horizontal).border(.blue)
+    }
+
+    @ViewBuilder
+    var radialLayout: some View {
+        //let baseSize: CGFloat = 80
+        RadialLayout {
+            ForEach((1..<10).reversed(), id: \.self) { index in
+                borderedNumeric(index)
+                    .font(.system(size: (index != 7) ? 20 : 40))
+                //Image(systemName: "\(index).square").resizable()
+                //  .frame(width: (index == 3) ? baseSize * 5: baseSize)
+                //height: (index == 3) ? baseSize*1.8: baseSize)
+            }
+        }
+        .border(.blue)
+        .clipped()
+        .offset(x: -250)
+        .border(.red)
+    }
+    
+    @ViewBuilder
+    func borderedNumeric(_ num: Int) -> some View {
+        Text(num.formatted())
+//            .font(.system(size: 80))
+//            .minimumScaleFactor(0.1)
+    }
+
+    
+    @ViewBuilder
+    var relativeLayout: some View {
         VStack {
             RelativeHStack(hSpacing: 0) {
                 Text("Hello, world!").font(.largeTitle)
@@ -104,3 +198,19 @@ struct ContentView: View {
     ContentView()
 }
 
+extension View {
+    func sizeConstraint(_ axis: Axis.Set) -> some View {
+        GeometryReader { geometry in
+            switch axis {
+            case [.horizontal]:
+                self.frame(width: geometry.size.width)
+            case [.vertical]:
+                self.frame(height: geometry.size.height)
+            case [.horizontal, .vertical]:
+                self.frame(width: geometry.size.width, height: geometry.size.height)
+            default:
+                self
+            }
+        }
+    }
+}
