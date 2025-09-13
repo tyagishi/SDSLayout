@@ -31,6 +31,22 @@ struct ContentView: View {
 ## FlexHFlow
 horizontal flow layout
 
+## HFlowSameSizeGrid
+```swift
+    HFlowSameSizeGrid(num: 5, initialPadding: 4, hSpacing: 5, vSpacing: 20) {
+        ForEach(1..<23, id: \.self) { value in
+            Color.standardColors[loop: value]
+                .frame(width: 50, height: 20)
+                .overlay {
+                    Text(value.formatted())
+                        .foregroundStyle(Color.standardColors[loop: value] == .black ? .white: .black)
+                }
+        }
+    }
+    .padding(5)
+    .border(.green, width: 5)
+```
+
 ## DiagnoalStack
 layout views along diagonal direction
 

@@ -44,34 +44,48 @@ struct ContentView: View {
     
     @ViewBuilder
     var hFlowGrid: some View {
-        HFlowGrid(num: 5, initialPadding: 4, hSpacing: 5, vSpacing: 20) {
-            ForEach(1..<23, id: \.self) { value in
-                Color.standardColors[loop: value]
-                    .frame(width: 50, height: 50)
-                    .overlay {
-                        Text(value.formatted())
-                            .foregroundStyle(Color.standardColors[loop: value] == .black ? .white: .black)
-                    }
+        HStack {
+            HFlowSameSizeGrid(num: 5, initialPadding: 4, hSpacing: 5, vSpacing: 20) {
+                ForEach(1..<23, id: \.self) { value in
+                    Color.standardColors[loop: value]
+                        .frame(width: 50, height: 20)
+                        .overlay {
+                            Text(value.formatted())
+                                .foregroundStyle(Color.standardColors[loop: value] == .black ? .white: .black)
+                        }
+                }
             }
+            .padding(5)
+            .border(.green, width: 5)
+            HFlowSameSizeGrid(num: 5, initialPadding: 4, hSpacing: 5, vSpacing: 20, sizePolicy: .square) {
+                ForEach(1..<23, id: \.self) { value in
+                    Color.standardColors[loop: value]
+                        .frame(width: 50, height: 20)
+                        .overlay {
+                            Text(value.formatted())
+                                .foregroundStyle(Color.standardColors[loop: value] == .black ? .white: .black)
+                        }
+                }
+            }
+            .padding(5)
+            .border(.green, width: 5)
         }
-        .padding(5)
-        .border(.green, width: 5)
     }
 
     @ViewBuilder
     var flexHFlowLayout: some View {
         FlexHFlow(alignment: .center) {
-            ForEach((1000..<1005), id: \.self) { value in
+            ForEach((1000..<1035), id: \.self) { value in
                 Text(value.formatted()).font(.largeTitle)
             }
         }.sizeConstraint(.horizontal).border(.red)
         FlexHFlow(alignment: .leading) {
-            ForEach((1000..<1005), id: \.self) { value in
+            ForEach((1000..<1025), id: \.self) { value in
                 Text(value.formatted()).font(.largeTitle)
             }
         }.sizeConstraint(.horizontal).border(.green)
         FlexHFlow(alignment: .trailing) {
-            ForEach((1000..<1005), id: \.self) { value in
+            ForEach((1000..<1045), id: \.self) { value in
                 Text(value.formatted()).font(.largeTitle)
             }
         }.sizeConstraint(.horizontal).border(.blue)
