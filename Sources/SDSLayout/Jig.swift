@@ -16,7 +16,7 @@ extension ProposedViewSize: @retroactive Hashable {
 }
 
 struct LayoutDebugViewKey: LayoutValueKey {
-    static let defaultValue: String = ""
+    static let defaultValue: String? = nil
 }
 
 public class LayoutDebugCache {

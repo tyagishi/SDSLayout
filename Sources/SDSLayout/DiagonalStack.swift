@@ -92,8 +92,8 @@ public struct DiagonalStack: Layout {
 
         while let (current, next) = viewIterator.next() {
             current.place(at: pos.move(offset), anchor: .topLeading, proposal: proposal)
-            if current[LayoutDebugViewKey.self] != "" {
-                cache.locDic[current[LayoutDebugViewKey.self]] = offset
+            if let key = current[LayoutDebugViewKey.self] {
+                cache.locDic[key] = offset
             }
          
             OSLog.dStack.debug("palce at \(pos.debugDescription)")
