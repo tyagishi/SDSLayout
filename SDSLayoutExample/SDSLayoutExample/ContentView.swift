@@ -45,7 +45,7 @@ struct ContentView: View {
     @ViewBuilder
     var hFlowGrid: some View {
         HStack {
-            HFlowSameSizeGrid(num: 5, initialPadding: 4, hSpacing: 5, vSpacing: 20) {
+            HFlowSameSizeGrid(num: 5, initialPadding: 0, hSpacing: 5, vSpacing: 20) {
                 ForEach(1..<23, id: \.self) { value in
                     Color.standardColors[loop: value]
                         .frame(width: 50, height: 20)

@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-extension ProposedViewSize: Hashable {
+extension ProposedViewSize: @retroactive Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(width)
         hasher.combine(height)
@@ -17,4 +17,17 @@ extension ProposedViewSize: Hashable {
 
 struct LayoutDebugViewKey: LayoutValueKey {
     static let defaultValue: String = ""
+}
+
+public class LayoutDebugCache {
+    var sizeThatFit: [ProposedViewSize: CGSize] = [:]
+    var locDic: [String: CGVector] = [:]
+    var proposal: [String: ProposedViewSize] = [:]
+}
+
+extension Color {
+    // standard color except .clear.white
+    static var standardColors: [Color] {
+        [.black, .blue, .brown, .cyan, .gray, .green, .indigo, .mint, .orange, .pink, .red, .teal, .yellow]
+    }
 }

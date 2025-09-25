@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SDSCGExtension
 import SDSSwiftExtension
 
 public struct HFlowSameSizeGrid: SpacableLayout {
@@ -28,6 +29,9 @@ public struct HFlowSameSizeGrid: SpacableLayout {
         }
     }
     let sizePolicy: SizePolicy
+    
+    public typealias Cache = LayoutDebugCache
+    var cache: Cache
 
     public init(num: Int, initialPadding: Int = 0, hSpacing: CGFloat = 0, vSpacing: CGFloat = 0, sizePolicy: SizePolicy = .widthHeightEach) {
         guard num > 0 else { fatalError("HFlowGrid: num must be greater than 0") }
@@ -37,19 +41,28 @@ public struct HFlowSameSizeGrid: SpacableLayout {
         self.sizePolicy = sizePolicy
         self.hSpacing = hSpacing
         self.vSpacing = vSpacing
+        
+        self.cache = Cache()
     }
     
-    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    public func makeCache(subviews: Subviews) -> Cache {
+        return self.cache
+    }
+    
+    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
         // basically each item should be calced based on ideal size
         let itemMaxSize = subviews.map({ $0.sizeThatFits(.unspecified) }).reduce(CGSize.zero, {(result, size) in result.bigger(size) })
         let useSize = sizePolicy.size(itemMaxSize)
         let width = useSize.width * CGFloat(rowItemNum) + (hSpacing ?? 0) * (CGFloat(rowItemNum) - 1)
         let columnItemNum = Int((subviews.count-1+initialPadding) / rowItemNum) + 1
         let height = useSize.height * CGFloat(columnItemNum) + (vSpacing ?? 0) * (CGFloat(columnItemNum) - 1)
-        return CGSize(width: width, height: height)
+        
+        let size = CGSize(width: width, height: height)
+        cache.sizeThatFit[proposal] = size
+        return size
     }
 
-    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) {
         let itemMaxSize = subviews.map({ $0.sizeThatFits(.unspecified) }).reduce(CGSize.zero, {(result, size) in result.bigger(size) })
         let useSize = sizePolicy.size(itemMaxSize)
 
@@ -58,7 +71,11 @@ public struct HFlowSameSizeGrid: SpacableLayout {
         var rowIndex = initialPadding
         
         for subview in subviews {
-            subview.place(at: CGPoint(x: posX, y: posY), anchor: .topLeading, proposal: proposal)
+            let loc = CGPoint(x: posX, y: posY)
+            if subview[LayoutDebugViewKey.self] != "" {
+                cache.locDic[subview[LayoutDebugViewKey.self]] = loc.diffVectorFrom(CGPoint(x: bounds.minX, y: bounds.minY))
+            }
+            subview.place(at: loc, anchor: .topLeading, proposal: proposal)
             rowIndex += 1
             posX += useSize.width + (hSpacing ?? 0)
             if rowIndex == rowItemNum {
