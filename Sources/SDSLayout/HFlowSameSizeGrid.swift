@@ -73,7 +73,7 @@ public struct HFlowSameSizeGrid: SpacableLayout {
         for subview in subviews {
             let loc = CGPoint(x: posX, y: posY)
             if subview[LayoutDebugViewKey.self] != "" {
-                cache.locDic[subview[LayoutDebugViewKey.self]] = loc.diffVectorFrom(CGPoint(x: bounds.minX, y: bounds.minY))
+                cache.locDic[subview[LayoutDebugViewKey.self]] = loc.diffVectorFrom(bounds.LUpoint())
             }
             subview.place(at: loc, anchor: .topLeading, proposal: proposal)
             rowIndex += 1
