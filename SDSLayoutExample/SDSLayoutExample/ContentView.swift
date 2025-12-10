@@ -13,6 +13,7 @@ enum DemoLayoutType: String, RawRepresentable, CaseIterable {
     case radial
     case flexHFlow
     case hFlowGrid
+    case sameSizeHStack
 }
 extension Color {
     // standard color except .clear.white
@@ -22,7 +23,7 @@ extension Color {
 }
 struct ContentView: View {
     @State private var showGuide = false
-    @State private var demoLayout = DemoLayoutType.hFlowGrid
+    @State private var demoLayout = DemoLayoutType.sameSizeHStack
     
     var body: some View {
         NavigationSplitView(sidebar: {
@@ -37,9 +38,50 @@ struct ContentView: View {
             case .radial: radialLayout
             case .flexHFlow: flexHFlowLayout
             case .hFlowGrid: hFlowGrid
+            case .sameSizeHStack: sameSizeHStack
             //default: Text("Not prepared")
             }
         })
+    }
+    
+    @ViewBuilder
+    var sameSizeHStack: some View {
+        HStack {
+            VStack {
+                Text("width and height")
+                SameSizeHStack(sameDirection: .sameWidthSameHeight) {
+                    Rectangle().fill(.red).frame(width: 100, height: 210)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.orange)
+                    Rectangle().fill(.green).frame(width: 130, height: 280)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.blue)
+                }.padding(3).border(.black)
+            }.padding(3)
+            VStack {
+                Text("only width")
+                SameSizeHStack(sameDirection: .sameWidth) {
+                    Rectangle().fill(.red).frame(width: 100, height: 210)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.orange)
+                    Rectangle().fill(.green).frame(width: 130, height: 280)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.blue)
+                }.padding(3).border(.black)
+            }.padding(3)
+            VStack {
+                Text("only height")
+                SameSizeHStack(sameDirection: .sameHeight) {
+                    Rectangle().fill(.red).frame(width: 100, height: 210)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.orange)
+                    Rectangle().fill(.green).frame(width: 130, height: 280)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.blue)
+                }.padding(3).border(.black)
+            }.padding(3)
+        }
+        .padding(5)
     }
     
     @ViewBuilder
