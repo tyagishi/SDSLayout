@@ -5,6 +5,44 @@ custom layouts which conform to SwiftUI.Layout
 HStack which use max/adequate size for width (and/or) height
 ![SameSizeHStack](https://github.com/user-attachments/assets/81adb1d9-d889-4064-8fe9-d2aebe77f319)
 
+```
+        HStack {
+            VStack {
+                Text("width and height")
+                SameSizeHStack(sameDirection: .sameWidthSameHeight) {
+                    Rectangle().fill(.red).frame(width: 100, height: 210)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.orange)
+                    Rectangle().fill(.green).frame(width: 130, height: 280)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.blue)
+                }.padding(3).border(.black)
+            }.padding(3)
+            VStack {
+                Text("only width")
+                SameSizeHStack(sameDirection: .sameWidth) {
+                    Rectangle().fill(.red).frame(width: 100, height: 210)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.orange)
+                    Rectangle().fill(.green).frame(width: 130, height: 280)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.blue)
+                }.padding(3).border(.black)
+            }.padding(3)
+            VStack {
+                Text("only height")
+                SameSizeHStack(sameDirection: .sameHeight) {
+                    Rectangle().fill(.red).frame(width: 100, height: 210)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.orange)
+                    Rectangle().fill(.green).frame(width: 130, height: 280)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .border(.blue)
+                }.padding(3).border(.black)
+            }.padding(3)
+        }
+```
+
 ## RelativeHStack/ RelativeVStack
 Width/Height control with available space ratio or fixed points
 ![RelativeHStack/RelativeVStackImage](https://github.com/user-attachments/assets/7a1c5fe6-e506-4922-9516-6802a73da2aa)
