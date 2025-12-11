@@ -59,18 +59,6 @@ struct ContentView: View {
     }
     
     @ViewBuilder
-    var sameSizeHStackContent: some View {
-        //Rectangle().fill(.green).frame(width: 130, height: 280)
-        Text("First\nSecondLongLine")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .border(.blue)
-        //Rectangle().fill(.red).frame(width: 100, height: 210)
-        Text("OneLine")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .border(.orange)
-    }
-
-    @ViewBuilder
     var sameSizeHStack: some View {
         let sizeAdjustments = [SameSizeHStack.SameSize.widthAndHeight, .width, .height]
         let alignments = [VerticalAlignment.top, .center, .firstTextBaseline, .lastTextBaseline, .bottom]
@@ -81,7 +69,12 @@ struct ContentView: View {
                         VStack {
                             Text("sizeAdjust: " + adjustment.1.description + "\n   alignment: " + alignment.1.name)
                             SameSizeHStack(alignment: alignment.1 , sameSize: adjustment.1) {
-                                sameSizeHStackContent
+                                Text("First\nSecondLongLine")
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .border(.blue)
+                                Text("OneLine")
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .border(.orange)
                             }.padding(3).border(.black)
                         }
                     }

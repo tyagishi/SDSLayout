@@ -3,44 +3,34 @@ custom layouts which conform to SwiftUI.Layout
 
 ## SameSizeHStack
 HStack which use max/adequate size for width (and/or) height
-![SameSizeHStack](https://github.com/user-attachments/assets/81adb1d9-d889-4064-8fe9-d2aebe77f319)
+![SameSizeHStack](https://github.com/user-attachments/assets/3a70ba64-4199-483c-abf7-ab781ab39a3f)
 
 ```
-        HStack {
-            VStack {
-                Text("width and height")
-                SameSizeHStack(sameDirection: .sameWidthSameHeight) {
-                    Rectangle().fill(.red).frame(width: 100, height: 210)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.orange)
-                    Rectangle().fill(.green).frame(width: 130, height: 280)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.blue)
-                }.padding(3).border(.black)
-            }.padding(3)
-            VStack {
-                Text("only width")
-                SameSizeHStack(sameDirection: .sameWidth) {
-                    Rectangle().fill(.red).frame(width: 100, height: 210)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.orange)
-                    Rectangle().fill(.green).frame(width: 130, height: 280)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.blue)
-                }.padding(3).border(.black)
-            }.padding(3)
-            VStack {
-                Text("only height")
-                SameSizeHStack(sameDirection: .sameHeight) {
-                    Rectangle().fill(.red).frame(width: 100, height: 210)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.orange)
-                    Rectangle().fill(.green).frame(width: 130, height: 280)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.blue)
-                }.padding(3).border(.black)
+    @ViewBuilder
+    var sameSizeHStack: some View {
+        let sizeAdjustments = [SameSizeHStack.SameSize.widthAndHeight, .width, .height]
+        let alignments = [VerticalAlignment.top, .center, .firstTextBaseline, .lastTextBaseline, .bottom]
+        VStack {
+            ForEach(Array(sizeAdjustments.enumerated()), id: \.0) { adjustment in
+                HStack {
+                    ForEach(Array(alignments.enumerated()), id: \.0) { alignment in
+                        VStack {
+                            Text("sizeAdjust: " + adjustment.1.description + "\n   alignment: " + alignment.1.name)
+                            SameSizeHStack(alignment: alignment.1 , sameSize: adjustment.1) {
+                                Text("First\nSecondLongLine")
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .border(.blue)
+                                Text("OneLine")
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .border(.orange)
+                            }.padding(3).border(.black)
+                        }
+                    }
+                }
             }.padding(3)
         }
+        .padding(5)
+    }
 ```
 
 ## RelativeHStack/ RelativeVStack
