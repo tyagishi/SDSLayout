@@ -21,6 +21,20 @@ extension Color {
         [.black, .blue, .brown, .cyan, .gray, .green, .indigo, .mint, .orange, .pink, .red, .teal, .yellow]
     }
 }
+
+extension VerticalAlignment {
+    public var name: String {
+        switch self {
+        case .top: "top"
+        case .center: "center"
+        case .bottom: "bottom"
+        case .firstTextBaseline: "firstTextBaseline"
+        case .lastTextBaseline: "lastTextBaseline"
+        default: "default?"
+        }
+    }
+}
+
 struct ContentView: View {
     @State private var showGuide = false
     @State private var demoLayout = DemoLayoutType.sameSizeHStack
@@ -45,40 +59,33 @@ struct ContentView: View {
     }
     
     @ViewBuilder
+    var sameSizeHStackContent: some View {
+        //Rectangle().fill(.green).frame(width: 130, height: 280)
+        Text("First\nSecondLongLine")
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .border(.blue)
+        //Rectangle().fill(.red).frame(width: 100, height: 210)
+        Text("OneLine")
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .border(.orange)
+    }
+
+    @ViewBuilder
     var sameSizeHStack: some View {
-        HStack {
-            VStack {
-                Text("width and height")
-                SameSizeHStack(sameDirection: .sameWidthSameHeight) {
-                    Rectangle().fill(.red).frame(width: 100, height: 210)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.orange)
-                    Rectangle().fill(.green).frame(width: 130, height: 280)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.blue)
-                }.padding(3).border(.black)
-            }.padding(3)
-            VStack {
-                Text("only width")
-                SameSizeHStack(sameDirection: .sameWidth) {
-                    Rectangle().fill(.red).frame(width: 100, height: 210)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.orange)
-                    Rectangle().fill(.green).frame(width: 130, height: 280)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.blue)
-                }.padding(3).border(.black)
-            }.padding(3)
-            VStack {
-                Text("only height")
-                SameSizeHStack(sameDirection: .sameHeight) {
-                    Rectangle().fill(.red).frame(width: 100, height: 210)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.orange)
-                    Rectangle().fill(.green).frame(width: 130, height: 280)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .border(.blue)
-                }.padding(3).border(.black)
+        let sizeAdjustments = [SameSizeHStack.SameSize.widthAndHeight, .width, .height]
+        let alignments = [VerticalAlignment.top, .center, .firstTextBaseline, .lastTextBaseline, .bottom]
+        VStack {
+            ForEach(Array(sizeAdjustments.enumerated()), id: \.0) { adjustment in
+                HStack {
+                    ForEach(Array(alignments.enumerated()), id: \.0) { alignment in
+                        VStack {
+                            Text("sizeAdjust: " + adjustment.1.description + "\n   alignment: " + alignment.1.name)
+                            SameSizeHStack(alignment: alignment.1 , sameSize: adjustment.1) {
+                                sameSizeHStackContent
+                            }.padding(3).border(.black)
+                        }
+                    }
+                }
             }.padding(3)
         }
         .padding(5)

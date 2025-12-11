@@ -17,29 +17,31 @@ import SDSSwiftExtension
 /// note: currently alignment is not supported, layout with .center alignment
 ///
 public struct SameSizeHStack: SpacableLayout {
-    public enum SameDirection {
-        case sameWidth, sameHeight, sameWidthSameHeight
+    public enum SameSize {
+        case width, height, widthAndHeight
         
         var careWidth: Bool {
             switch self {
-            case .sameWidth, .sameWidthSameHeight: return true
-            case .sameHeight:                      return false
+            case .width, .widthAndHeight: return true
+            case .height:                 return false
             }
         }
         var careHeight: Bool {
             switch self {
-            case .sameWidth:                         return false
-            case .sameHeight, .sameWidthSameHeight:  return true
+            case .width:                    return false
+            case .height, .widthAndHeight:  return true
             }
         }
     }
     
     let hSpacing: CGFloat?
-    let sameDirection: SameDirection
+    let sameSize: SameSize
+    let alignment: VerticalAlignment
     
-    public init(alignment: VerticalAlignment? = nil, hSpacing: CGFloat? = nil, sameDirection: SameDirection = .sameWidthSameHeight) {
+    public init(alignment: VerticalAlignment = .center, hSpacing: CGFloat? = nil, sameSize: SameSize = .widthAndHeight) {
         self.hSpacing = hSpacing
-        self.sameDirection = sameDirection
+        self.sameSize = sameSize
+        self.alignment = alignment
     }
     
     public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
@@ -47,7 +49,7 @@ public struct SameSizeHStack: SpacableLayout {
 
         var totalWidth: CGFloat = 0
 
-        if sameDirection.careWidth {
+        if sameSize.careWidth {
             totalWidth += maxWidthHeight.width * CGFloat(subviews.count) + totalSpacing(subviews, along: .horizontal)
         } else {
             var pairIte = PairIterator(subviews)
@@ -64,26 +66,60 @@ public struct SameSizeHStack: SpacableLayout {
     
     public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
         let maxWidthHeight = maxWidthHeightOfViews(proposal: .unspecified, subviews: subviews)
+        let maxOffset = subviews.reduce(0.0) { max($0, $1.dimensions(in: .unspecified)[alignment] )}
 
         var viewIterator = PairIterator(subviews)
-        var baseLoc = CGPoint(x: bounds.minX, y: bounds.minY + maxWidthHeight.height / 2.0)
+        var placePos: CGPoint = CGPoint(x: bounds.minX, y: bounds.minY)
         while let (current, next) = viewIterator.next() {
-            let sizeProposal = proposedViewSizeForPlace(subview: current, maxSize: maxWidthHeight)
-            current.place(at: baseLoc, anchor: .leading, proposal: sizeProposal)
-            let viewSize = current.sizeThatFits(.unspecified)
+            let layoutViewSize = layoutViewSize(subview: current, maxSize: maxWidthHeight)
 
-            baseLoc.x += sameDirection.careWidth ? maxWidthHeight.width : viewSize.width
+            // in case using same height, alignment does not have meaning, so let's ignore
+            let layoutAlignment = (sameSize.careHeight) ? .center : alignment
+                
+            let pos: CGPoint
+            let anchor: UnitPoint
+            switch layoutAlignment {
+            case .top:
+                pos = placePos
+                anchor = .topLeading
+            case .center:
+                pos = CGPoint(x: placePos.x + layoutViewSize.width / 2.0, y: bounds.midY)
+                anchor = .center
+            case .firstTextBaseline:
+                let baselineOffset = current.dimensions(in: .unspecified)[.firstTextBaseline]
+                pos = CGPoint(x: placePos.x + layoutViewSize.width / 2.0, y: bounds.minY + maxOffset - baselineOffset)
+                anchor = .top
+            case .lastTextBaseline:
+                let baselineOffset = current.dimensions(in: .unspecified)[.lastTextBaseline]
+                pos = CGPoint(x: placePos.x + layoutViewSize.width / 2.0, y: bounds.minY + maxOffset - baselineOffset)
+                anchor = .top
+            case .bottom:
+                pos = CGPoint(x: placePos.x, y: bounds.maxY)
+                anchor = .bottomLeading
+            default:
+                pos = CGPoint(x: placePos.x + layoutViewSize.width / 2.0, y: bounds.midY)
+                anchor = .center
+            }
+            current.place(at: pos, anchor: anchor, proposal: ProposedViewSize(layoutViewSize))
+            placePos.x += layoutViewSize.width
             
             guard let next = next else { continue }
             let spacing = spacingBetween(current, next, along: .horizontal)
-            baseLoc.x += spacing
+            placePos.x += spacing
         }
+    }
+    
+    func layoutViewSize(subview: LayoutSubview, maxSize: CGSize) -> CGSize {
+        let viewSize = subview.sizeThatFits(.unspecified)
+        let width = sameSize.careWidth ? maxSize.width : viewSize.width
+        let height = sameSize.careHeight ? maxSize.height : viewSize.height
+        return CGSize(width: width, height: height)
     }
     
     func proposedViewSizeForPlace(subview: LayoutSubview, maxSize: CGSize) -> ProposedViewSize {
         let viewSize = subview.sizeThatFits(.unspecified)
-        let width = sameDirection.careWidth ? maxSize.width : viewSize.width
-        let height = sameDirection.careHeight ? maxSize.height : viewSize.height
+        let width = sameSize.careWidth ? maxSize.width : viewSize.width
+        let height = sameSize.careHeight ? maxSize.height : viewSize.height
         return ProposedViewSize(width: width, height: height)
     }
     
@@ -98,5 +134,15 @@ public struct SameSizeHStack: SpacableLayout {
             if maxHeight < size.height { maxHeight = size.height }
         }
         return CGSize(width: maxWidth, height: maxHeight)
+    }
+}
+
+extension SameSizeHStack.SameSize: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .width:           "sameWidth"
+        case .height:          "sameHeight"
+        case .widthAndHeight: "sameWidthHeight"
+        }
     }
 }
