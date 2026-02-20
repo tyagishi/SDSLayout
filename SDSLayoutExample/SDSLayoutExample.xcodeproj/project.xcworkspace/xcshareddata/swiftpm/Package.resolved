@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/tyagishi/SDSCGExtension",
       "state" : {
-        "revision" : "8ecb2376c61636ecef2efbbe8a569760a339e69e",
-        "version" : "1.3.3"
+        "revision" : "d029e1c450dbcf2c362bd2cac2f640525af78868",
+        "version" : "1.3.6"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/tyagishi/SDSFoundationExtension",
       "state" : {
-        "revision" : "6eb25cacf3d101e3d8a090bdb2fb4da5d8af6cb0",
-        "version" : "1.1.3"
+        "revision" : "0c9a5df3f03d7b366e6e74f90b9ac13d2c230a7c",
+        "version" : "1.5.7"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/tyagishi/SDSSwiftExtension",
       "state" : {
-        "revision" : "4dc7f3adaf612af00f407910c53e2f25f3cc5db9",
-        "version" : "2.1.2"
+        "revision" : "a9ba758d52aaad251d492a1bc1d0de7cb53fd1a9",
+        "version" : "2.1.4"
       }
     },
     {

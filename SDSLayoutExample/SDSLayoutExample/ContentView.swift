@@ -14,6 +14,7 @@ enum DemoLayoutType: String, RawRepresentable, CaseIterable {
     case flexHFlow
     case hFlowGrid
     case sameSizeHStack
+    case treeGrid
 }
 extension Color {
     // standard color except .clear.white
@@ -35,9 +36,10 @@ extension VerticalAlignment {
     }
 }
 
+
 struct ContentView: View {
     @State private var showGuide = false
-    @State private var demoLayout = DemoLayoutType.sameSizeHStack
+    @State private var demoLayout = DemoLayoutType.treeGrid
     
     var body: some View {
         NavigationSplitView(sidebar: {
@@ -53,10 +55,48 @@ struct ContentView: View {
             case .flexHFlow: flexHFlowLayout
             case .hFlowGrid: hFlowGrid
             case .sameSizeHStack: sameSizeHStack
+            case .treeGrid: treeGrid
             //default: Text("Not prepared")
             }
         })
     }
+    
+    @ViewBuilder
+    var treeGrid: some View {
+        VStack {
+            TreeGrid(generationNum: 2){
+                Group {
+                    Text("1")
+                        .font(.largeTitle)
+                        .border(.blue)
+                    //                    .treeLayoutGeneration(0)
+                    Text("2")
+                        .font(.largeTitle)
+                        .border(.blue)
+                    //                    .treeLayoutGeneration(0)
+                    Text("3")
+                        .font(.largeTitle)
+                        .border(.blue)
+                }
+                    .treeLayoutGeneration(0)
+                Text("4")
+                    .treeLayoutGeneration(0)
+                    .border(.blue)
+                Text("A")
+                    .font(.largeTitle)
+                    .treeLayoutGeneration(1)
+                    .border(.green)
+                Text("B")
+                    .font(.largeTitle)
+                    .treeLayoutGeneration(1)
+                    .border(.green)
+                Text("C")
+                    .treeLayoutGeneration(1)
+                    .border(.green)
+            }
+        }.border(.red)
+    }
+    
     
     @ViewBuilder
     var sameSizeHStack: some View {
@@ -270,3 +310,4 @@ extension View {
         }
     }
 }
+
