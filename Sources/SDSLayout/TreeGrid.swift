@@ -35,7 +35,6 @@ public struct TreeGrid: Layout {
     
     public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
         let maxSize = subviews.maxElementSize(proposal: proposal)
-        print("maxSize :" + maxSize.debugDescription)
         var elementMaxNum: Int = 0
         for gen in 0..<generationNum {
             let genViewNum = num(for: gen, subviews: subviews)
@@ -43,7 +42,6 @@ public struct TreeGrid: Layout {
         }
         
         let size = CGSize(width: maxSize.width * CGFloat(generationNum), height: maxSize.height * CGFloat(elementMaxNum))
-        print("Size: " + size.debugDescription)
         return size
     }
     
@@ -55,7 +53,6 @@ public struct TreeGrid: Layout {
             for (index, subview) in generationViews(gen, subviews).enumerated() {
                 let vec = CGVector(dx: CGFloat(gen) * maxSize.width + maxSize.width * 0.5,
                                    dy: verticalOffset + maxSize.height * CGFloat(index) + maxSize.height * 0.5)
-                print("loc " + baseLoc.move(vec).debugDescription)
                 subview.place(at: baseLoc.move(vec),
                               anchor: .center,
                               proposal: proposal)
@@ -70,7 +67,4 @@ public struct TreeGrid: Layout {
     func num(for gen: Int, subviews: Subviews ) -> Int {
         return subviews.filter({ $0[TreeLayoutGenerationKey.self] == gen}).count
     }
-    
 }
-
-
