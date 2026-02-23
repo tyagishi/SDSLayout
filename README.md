@@ -1,6 +1,51 @@
 # SDSLayout
 custom layouts which conform to SwiftUI.Layout
 
+## TreeGrid
+Tree style layout
+each node has same width/height (maximum width/ maximum height)
+can specify generation(start from 0) using layoutValue
+
+```
+    @ViewBuilder
+    var treeGrid: some View {
+        VStack {
+            TreeGrid(generationNum: 4){
+                Rectangle().fill(.blue).frame(width: 100, height: 100)
+                    .overlay { Text("0-0") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.red).frame(width: 100, height: 100)
+                    .overlay { Text("0-1") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.green).frame(width: 100, height: 100)
+                    .overlay { Text("0-2") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.yellow).frame(width: 100, height: 100)
+                    .overlay { Text("0-3") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.orange).frame(width: 100, height: 100)
+                    .overlay { Text("1-0") }
+                    .treeLayoutGeneration(1)
+                Rectangle().fill(.cyan).frame(width: 100, height: 100)
+                    .overlay { Text("1-1") }
+                    .treeLayoutGeneration(1)
+                Rectangle().fill(.brown).frame(width: 100, height: 100)
+                    .overlay { Text("1-2") }
+                    .treeLayoutGeneration(1)
+                Rectangle().fill(.blue).frame(width: 100, height: 100)
+                    .overlay { Text("2-0") }
+                    .treeLayoutGeneration(2)
+                Rectangle().fill(.red).frame(width: 100, height: 100)
+                    .overlay { Text("2-1") }
+                    .treeLayoutGeneration(2)
+                Rectangle().fill(.orange).frame(width: 100, height: 100)
+                    .overlay { Text("3-0") }
+                    .treeLayoutGeneration(3)
+            }
+        }.border(.red)
+    }
+```
+
 ## SameSizeHStack
 HStack which use max/adequate size for width (and/or) height
 ![SameSizeHStack](https://github.com/user-attachments/assets/3a70ba64-4199-483c-abf7-ab781ab39a3f)

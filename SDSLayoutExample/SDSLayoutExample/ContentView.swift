@@ -55,7 +55,7 @@ struct ContentView: View {
             case .flexHFlow: flexHFlowLayout
             case .hFlowGrid: hFlowGrid
             case .sameSizeHStack: sameSizeHStack
-            case .treeGrid: treeGrid
+            case .treeGrid: treeGridBox
             //default: Text("Not prepared")
             }
         })
@@ -65,19 +65,17 @@ struct ContentView: View {
     var treeGrid: some View {
         VStack {
             TreeGrid(generationNum: 2){
-                Group {
-                    Text("1")
-                        .font(.largeTitle)
-                        .border(.blue)
-                    //                    .treeLayoutGeneration(0)
-                    Text("2")
-                        .font(.largeTitle)
-                        .border(.blue)
-                    //                    .treeLayoutGeneration(0)
-                    Text("3")
-                        .font(.largeTitle)
-                        .border(.blue)
-                }
+                Text("1")
+                    .font(.largeTitle)
+                    .border(.blue)
+                    .treeLayoutGeneration(0)
+                Text("2")
+                    .font(.largeTitle)
+                    .border(.blue)
+                    .treeLayoutGeneration(0)
+                Text("3")
+                    .font(.largeTitle)
+                    .border(.blue)
                     .treeLayoutGeneration(0)
                 Text("4")
                     .treeLayoutGeneration(0)
@@ -97,6 +95,43 @@ struct ContentView: View {
         }.border(.red)
     }
     
+    @ViewBuilder
+    var treeGridBox: some View {
+        VStack {
+            TreeGrid(generationNum: 4){
+                Rectangle().fill(.blue).frame(width: 100, height: 100)
+                    .overlay { Text("0-0") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.red).frame(width: 100, height: 100)
+                    .overlay { Text("0-1") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.green).frame(width: 100, height: 100)
+                    .overlay { Text("0-2") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.yellow).frame(width: 100, height: 100)
+                    .overlay { Text("0-3") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.orange).frame(width: 100, height: 100)
+                    .overlay { Text("1-0") }
+                    .treeLayoutGeneration(1)
+                Rectangle().fill(.cyan).frame(width: 100, height: 100)
+                    .overlay { Text("1-1") }
+                    .treeLayoutGeneration(1)
+                Rectangle().fill(.brown).frame(width: 100, height: 100)
+                    .overlay { Text("1-2") }
+                    .treeLayoutGeneration(1)
+                Rectangle().fill(.blue).frame(width: 100, height: 100)
+                    .overlay { Text("2-0") }
+                    .treeLayoutGeneration(2)
+                Rectangle().fill(.red).frame(width: 100, height: 100)
+                    .overlay { Text("2-1") }
+                    .treeLayoutGeneration(2)
+                Rectangle().fill(.orange).frame(width: 100, height: 100)
+                    .overlay { Text("3-0") }
+                    .treeLayoutGeneration(3)
+            }
+        }
+    }
     
     @ViewBuilder
     var sameSizeHStack: some View {
