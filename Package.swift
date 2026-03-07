@@ -18,6 +18,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/tyagishi/SDSFoundationExtension", from: "1.0.0"),
         .package(url: "https://github.com/tyagishi/SDSCGExtension", from: "1.3.0"),
+//        .package(url: "https://github.com/tyagishi/SDSMacros", from: "2.0.0"),
         .package(url: "https://github.com/tyagishi/SDSSwiftExtension", from: "2.1.0"),
         .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.56.1"),
     ],
@@ -27,7 +28,10 @@ let package = Package(
         .target(
             name: "SDSLayout",
             dependencies: ["SDSFoundationExtension", "SDSCGExtension", "SDSSwiftExtension"],
-            plugins: [ .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins") ]
+            plugins: [
+//                .plugin(name: "SDSMacros", package: "SDSMacros"),
+                .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins")
+            ]
         ),
         .testTarget(
             name: "SDSLayoutTests",
