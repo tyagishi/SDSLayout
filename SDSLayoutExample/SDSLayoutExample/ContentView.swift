@@ -15,6 +15,7 @@ enum DemoLayoutType: String, RawRepresentable, CaseIterable {
     case hFlowGrid
     case sameSizeHStack
     case treeGrid
+    case coil
 }
 extension Color {
     // standard color except .clear.white
@@ -56,9 +57,26 @@ struct ContentView: View {
             case .hFlowGrid: hFlowGrid
             case .sameSizeHStack: sameSizeHStack
             case .treeGrid: treeGridBox
+            case .coil: coilLayout
             //default: Text("Not prepared")
             }
         })
+    }
+    
+    @ViewBuilder
+    var coilLayout: some View {
+        //let baseSize: CGFloat = 80
+        VStack {
+            Text("Coil layout will appear here")
+//            Radial {
+//                ForEach((1..<10), id: \.self) { index in
+//                    Text(index.formatted())
+//                        .font(.system(size: (index != 7) ? 20 : 40))
+//                }
+//            }
+//            .clipped()
+//            .border(.blue)
+        }
     }
     
     @ViewBuilder
@@ -213,7 +231,7 @@ struct ContentView: View {
         //let baseSize: CGFloat = 80
         VStack {
             HStack {
-                RadialLayout {
+                Radial {
                     ForEach((1..<10), id: \.self) { index in
                         Text(index.formatted())
                             .font(.system(size: (index != 7) ? 20 : 40))
@@ -224,7 +242,7 @@ struct ContentView: View {
                 }
                 .clipped()
                 .border(.blue)
-                RadialLayout(radius: 150) {
+                Radial(radius: 150) {
                     ForEach((0..<12*5), id: \.self) { index in
                         clockNumeric(index)
                             .font(.system(size: (index % 5 != 0) ? 20 : 40))

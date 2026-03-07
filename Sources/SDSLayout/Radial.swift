@@ -19,7 +19,7 @@ enum LayoutMode {
     }
 }
 
-public struct RadialLayout: Layout {
+public struct Radial: Layout {
     let layoutMode: LayoutMode
 
     public init(radius: Double? = nil) {
