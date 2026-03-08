@@ -72,12 +72,12 @@ struct ContentView: View {
         let elementsInRotation = [6, 12, 18, 24, 30]
         ZStack {
             Circle().frame(width: 10, height: 10).foregroundStyle(.black)
-            Spiral(radius: { index in return 30.0+Double(index)*50.0 },
+            Spiral(radius: { index in return 15.0+Double(index)*25.0 },
                    viewNumForLoop: { index in return elementsInRotation[safe: index] }) {
                 ForEach((1..<80), id: \.self) { index in
                     Circle()
-                        .frame(width: 50, height: 50)
-                        .foregroundStyle(Color.pickedStandardColor(index))
+                        .frame(width: 30, height: 30)
+                        .foregroundStyle(Color.pickedStandardColor(findLoopIndex(index, elementsInRotation: { index in return elementsInRotation[safe: index] ?? 0})))
                         .overlay {
                             Text(index.formatted()).foregroundStyle(.white)
                         }
@@ -86,6 +86,16 @@ struct ContentView: View {
             .clipped()
             .border(.blue)
         }
+    }
+    
+    func findLoopIndex(_ index: Int, elementsInRotation: @escaping (Int) -> Int) -> Int {
+        var loopIndex = 0
+        var remainingElements = index
+        while remainingElements > 0 {
+            remainingElements -= elementsInRotation(loopIndex)
+            loopIndex += 1
+        }
+        return loopIndex
     }
     
     @ViewBuilder
