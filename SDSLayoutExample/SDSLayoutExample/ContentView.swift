@@ -237,7 +237,6 @@ struct ContentView: View {
 
     @ViewBuilder
     var radialLayout: some View {
-        //let baseSize: CGFloat = 80
         VStack {
             HStack {
                 Radial {
