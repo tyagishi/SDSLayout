@@ -41,9 +41,6 @@ layout along circle
                     ForEach((1..<10), id: \.self) { index in
                         Text(index.formatted())
                             .font(.system(size: (index != 7) ? 20 : 40))
-                        //Image(systemName: "\(index).square").resizable()
-                        //  .frame(width: (index == 3) ? baseSize * 5: baseSize)
-                        //height: (index == 3) ? baseSize*1.8: baseSize)
                     }
                 }
                 .clipped()
@@ -52,9 +49,6 @@ layout along circle
                     ForEach((0..<12*5), id: \.self) { index in
                         clockNumeric(index)
                             .font(.system(size: (index % 5 != 0) ? 20 : 40))
-                        //Image(systemName: "\(index).square").resizable()
-                        //  .frame(width: (index == 3) ? baseSize * 5: baseSize)
-                        //height: (index == 3) ? baseSize*1.8: baseSize)
                     }
                 }
                 .clipped()
