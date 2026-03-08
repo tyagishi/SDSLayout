@@ -1,6 +1,32 @@
 # SDSLayout
 custom layouts which conform to SwiftUI.Layout
 
+## Spiral
+spiral layout 
+
+![Spiral](https://github.com/user-attachments/assets/25532eab-03cd-43fe-8c2b-6a1f9c8ee193)
+```
+    @ViewBuilder
+    var spiralLayout: some View {
+        let elementsInRotation = [6, 12, 18, 24, 30]
+        ZStack {
+            Circle().frame(width: 10, height: 10).foregroundStyle(.black)
+            Spiral(radius: { index in return 30.0+Double(index)*50.0 }, viewNumForLoop: { index in return elementsInRotation[safe: index] ?? nil }) {
+                ForEach((1..<80), id: \.self) { index in
+                    Circle()
+                        .frame(width: 50, height: 50)
+                        .foregroundStyle(Color.pickedStandardColor(index))
+                        .overlay {
+                            Text(index.formatted()).foregroundStyle(.white)
+                        }
+                }
+            }
+            .clipped()
+            .border(.blue)
+        }
+    }
+```
+
 ## Radial
 layout along circle
 
