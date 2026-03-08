@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SDSLayout
+import SDSSwiftExtension
 
 enum DemoLayoutType: String, RawRepresentable, CaseIterable {
     case relative
@@ -15,12 +16,15 @@ enum DemoLayoutType: String, RawRepresentable, CaseIterable {
     case hFlowGrid
     case sameSizeHStack
     case treeGrid
-    case coil
+    case spiral
 }
 extension Color {
     // standard color except .clear.white
     static var standardColors: [Color] {
         [.black, .blue, .brown, .cyan, .gray, .green, .indigo, .mint, .orange, .pink, .red, .teal, .yellow]
+    }
+    static func pickedStandardColor(_ index: Int) -> Color {
+        Self.standardColors[index % Self.standardColors.count]
     }
 }
 
@@ -40,7 +44,7 @@ extension VerticalAlignment {
 
 struct ContentView: View {
     @State private var showGuide = false
-    @State private var demoLayout = DemoLayoutType.radial
+    @State private var demoLayout = DemoLayoutType.spiral
     
     var body: some View {
         NavigationSplitView(sidebar: {
@@ -57,25 +61,29 @@ struct ContentView: View {
             case .hFlowGrid: hFlowGrid
             case .sameSizeHStack: sameSizeHStack
             case .treeGrid: treeGridBox
-            case .coil: coilLayout
+            case .spiral: spiralLayout
             //default: Text("Not prepared")
             }
         })
     }
     
     @ViewBuilder
-    var coilLayout: some View {
-        //let baseSize: CGFloat = 80
-        VStack {
-            Text("Coil layout will appear here")
-//            Radial {
-//                ForEach((1..<10), id: \.self) { index in
-//                    Text(index.formatted())
-//                        .font(.system(size: (index != 7) ? 20 : 40))
-//                }
-//            }
-//            .clipped()
-//            .border(.blue)
+    var spiralLayout: some View {
+        let elementsInRotation = [6, 12, 18, 24, 30]
+        ZStack {
+            Circle().frame(width: 10, height: 10).foregroundStyle(.black)
+            Spiral(radius: { index in return 30.0+Double(index)*50.0 }, viewNumForLoop: { index in return elementsInRotation[safe: index] ?? nil }) {
+                ForEach((1..<80), id: \.self) { index in
+                    Circle()
+                        .frame(width: 50, height: 50)
+                        .foregroundStyle(Color.pickedStandardColor(index))
+                        .overlay {
+                            Text(index.formatted()).foregroundStyle(.white)
+                        }
+                }
+            }
+            .clipped()
+            .border(.blue)
         }
     }
     
