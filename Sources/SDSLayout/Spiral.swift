@@ -64,6 +64,7 @@ public struct Spiral: Layout {
             startIndex += viewNumInLoop
             viewNumInLoop = viewNumForLoop(loopIndex+1) ?? 0
             loopIndex += 1
+            guard startIndex < subviews.count else { break }
         }
     }
 }
