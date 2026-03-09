@@ -7,7 +7,6 @@
 
 import Testing
 @testable import SDSLayout
-@testable import SDSLayoutExample
 
 struct SpiralTests {
 
