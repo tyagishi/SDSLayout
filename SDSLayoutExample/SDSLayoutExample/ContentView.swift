@@ -71,7 +71,7 @@ struct ContentView: View {
     var spiralLayout: some View {
         ZStack {
             Circle().frame(width: 10, height: 10).foregroundStyle(.black)
-            Spiral(radius: { 15.0+Double($0*25) }, viewNumForLoop: { ($0+1)*6 }) {
+            Spiral(radius: { 15.0+Double($0*25) }, variousAngle: true, viewNumForLoop: { ($0+1)*6 }) {
                 ForEach((1..<80), id: \.self) { index in
                     Circle()
                         .frame(width: 30, height: 30)
