@@ -49,7 +49,7 @@ public struct Spiral: Layout {
             let startRadius = calcRadius(loopIndex)
             let endRadius = calcRadius(loopIndex+1)
             
-            let (radii, angles) = placeRadiiAngles(startRadius, endRadius, viewNumInLoop)
+            let (radii, angles) = variousAngle ? calcVariousRadiiAngles(startRadius, endRadius, viewNumInLoop) : placeRadiiAngles(startRadius, endRadius, viewNumInLoop)
             for indexInLoop in 0..<viewNumInLoop {
                 if subviews.count <= startIndex+indexInLoop { break }
                 var point = CGPoint(x: 0, y: -1 * radii[indexInLoop])
@@ -79,6 +79,31 @@ public struct Spiral: Layout {
             angles.append(currentAngle)
             currentAngle += stepAngle
         }
+        return (radii, angles)
+    }
+    
+    func calcVariousRadiiAngles(_ startRadius: Double,_ endRadius: Double,_ divideNum: Int) -> (radii: [Double], angles: [Angle]) {
+        let (radii, angles) = placeRadiiAngles(startRadius, endRadius, divideNum)
+        let radValues: [Double] = Array(zip(radii, radii.dropFirst())).map({ $0.0 + $0.1})
+        
+        for (currentRadius, nextRadius) in zip(radii, radii.dropFirst()) {
+            let check: Double = currentRadius
+            let check2 = nextRadius
+            
+        }
+        
+//        let midRadii = radii.redu
+//
+//        var radii: [Double] = []
+//        var angles: [Angle] = []
+//        let stepAngle = Angle(degrees: 360.0 / Double(divideNum))
+//        var currentAngle = Angle(degrees: 0)
+//        for index in 0..<divideNum {
+//            let radius = (endRadius - startRadius) * Double(index) / Double(divideNum) + startRadius
+//            radii.append(radius)
+//            angles.append(currentAngle)
+//            currentAngle += stepAngle
+//        }
         return (radii, angles)
     }
 }
