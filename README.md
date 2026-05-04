@@ -176,8 +176,10 @@ struct ContentView: View {
 horizontal flow layout
 
 ## HFlowSameSizeGrid
+![HFlowSameSizeGridImage](https://github.com/user-attachments/assets/3a33dcad-86e1-4ce7-a59b-4c21b18f174a)
 ```swift
-    HFlowSameSizeGrid(num: 5, initialPadding: 4, hSpacing: 5, vSpacing: 20) {
+HStack {
+    HFlowSameSizeGrid(num: 5, initialPadding: 0, hSpacing: 5, vSpacing: 20) {
         ForEach(1..<23, id: \.self) { value in
             Color.standardColors[loop: value]
                 .frame(width: 50, height: 20)
@@ -189,6 +191,19 @@ horizontal flow layout
     }
     .padding(5)
     .border(.green, width: 5)
+    HFlowSameSizeGrid(num: 5, initialPadding: 4, hSpacing: 5, vSpacing: 20, sizePolicy: .square) {
+        ForEach(1..<23, id: \.self) { value in
+            Color.standardColors[loop: value]
+                .frame(width: 50, height: 20)
+                .overlay {
+                    Text(value.formatted())
+                        .foregroundStyle(Color.standardColors[loop: value] == .black ? .white: .black)
+                }
+        }
+    }
+    .padding(5)
+    .border(.green, width: 5)
+}
 ```
 
 ## DiagnoalStack

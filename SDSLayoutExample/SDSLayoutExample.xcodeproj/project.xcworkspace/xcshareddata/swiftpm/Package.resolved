@@ -20,30 +20,12 @@
       }
     },
     {
-      "identity" : "sdsmacros",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tyagishi/SDSMacros",
-      "state" : {
-        "revision" : "d34f89b78be9cd07c9197400e838541cd9a8f6bb",
-        "version" : "2.0.1"
-      }
-    },
-    {
       "identity" : "sdsswiftextension",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/tyagishi/SDSSwiftExtension",
       "state" : {
-        "revision" : "a9ba758d52aaad251d492a1bc1d0de7cb53fd1a9",
-        "version" : "2.1.4"
-      }
-    },
-    {
-      "identity" : "swift-syntax",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-syntax.git",
-      "state" : {
-        "revision" : "2bc86522d115234d1f588efe2bcb4ce4be8f8b82",
-        "version" : "510.0.3"
+        "revision" : "a315cf7389b1e8ee67403921babe35860177899c",
+        "version" : "3.0.5"
       }
     },
     {
