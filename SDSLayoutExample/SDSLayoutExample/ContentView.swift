@@ -135,8 +135,8 @@ struct ContentView: View {
 @ViewBuilder
 var alternativeGrid: some View {
     VStack {
-        AlternativeGrid(generationNum: 4){
-            Rectangle().fill(.blue).frame(width: 100, height: 100)
+        AlternativeGrid(generationNum: 4, widthPolicy: .eachColumn){
+            Rectangle().fill(.blue).frame(width: 200, height: 100)
                 .overlay { Text("0-0") }
                 .treeLayoutGeneration(0)
             Rectangle().fill(.red).frame(width: 100, height: 100)
