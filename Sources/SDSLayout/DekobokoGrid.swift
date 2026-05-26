@@ -10,22 +10,22 @@ import SwiftUI
 import OSLog
 
 extension OSLog {
-    // static var log = Logger(subsystem: "com.smalldesksoftware.sdslayout", category: "AlternateGrid")
+    // static var log = Logger(subsystem: "com.smalldesksoftware.sdslayout", category: "DekobokoGrid")
     static fileprivate let log = Logger(.disabled)
 }
 
-struct AlternativeLayoutGenerationKey: LayoutValueKey {
+struct DekobokoLayoutColumnKey: LayoutValueKey {
     static let defaultValue: Int? = nil
 }
 extension View {
-    public func alternativeLayoutGeneration(_ value: Int?) -> some View {
-        layoutValue(key: AlternativeLayoutGenerationKey.self, value: value)
+    public func dekobokoLayoutColumn(_ value: Int?) -> some View {
+        layoutValue(key: DekobokoLayoutColumnKey.self, value: value)
     }
 }
 
 /// Tree(Grid) Layout
 /// generationNum: tree-depth 0..<generationNum>
-public struct AlternativeGrid: Layout {
+public struct DekobokoGrid: Layout {
     public typealias Cache = Void
     let generationNum: Int
     let widthPolicy: WidthPolicy
@@ -105,7 +105,7 @@ public struct AlternativeGrid: Layout {
     }
     
     func generationViews(_ gen: Int, _ subviews: Subviews) -> [LayoutSubview] {
-        return subviews.filter({ $0[TreeLayoutGenerationKey.self] == gen})
+        return subviews.filter({ $0[DekobokoLayoutColumnKey.self] == gen})
     }
     
     func maxSizeEachGen(proposal: ProposedViewSize, _ subviews: Subviews) -> [Int: CGSize] {
@@ -119,6 +119,6 @@ public struct AlternativeGrid: Layout {
     }
     
     func num(for gen: Int, subviews: Subviews ) -> Int {
-        return subviews.filter({ $0[TreeLayoutGenerationKey.self] == gen}).count
+        return subviews.filter({ $0[DekobokoLayoutColumnKey.self] == gen}).count
     }
 }
