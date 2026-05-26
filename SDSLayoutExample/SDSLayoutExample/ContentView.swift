@@ -17,6 +17,7 @@ enum DemoLayoutType: String, RawRepresentable, CaseIterable {
     case sameSizeHStack
     case treeGrid
     case spiral
+    case alternativeGrid
 }
 extension Color {
     // standard color except .clear.white
@@ -44,7 +45,7 @@ extension VerticalAlignment {
 
 struct ContentView: View {
     @State private var showGuide = false
-    @State private var demoLayout = DemoLayoutType.spiral
+    @State private var demoLayout = DemoLayoutType.alternativeGrid
     
     var body: some View {
         NavigationSplitView(sidebar: {
@@ -62,6 +63,7 @@ struct ContentView: View {
             case .sameSizeHStack: sameSizeHStack
             case .treeGrid: treeGridBox
             case .spiral: spiralLayout
+            case .alternativeGrid: alternativeGrid
             //default: Text("Not prepared")
             }
         })
@@ -128,6 +130,59 @@ struct ContentView: View {
                     .border(.green)
             }
         }.border(.red)
+    }
+    
+    @ViewBuilder
+    var alternativeGrid: some View {
+        VStack {
+            AlternativeGrid(generationNum: 4){
+                Rectangle().fill(.blue).frame(width: 100, height: 100)
+                    .overlay { Text("0-0") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.red).frame(width: 100, height: 100)
+                    .overlay { Text("0-1") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.green).frame(width: 100, height: 100)
+                    .overlay { Text("0-2") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.yellow).frame(width: 100, height: 100)
+                    .overlay { Text("0-3") }
+                    .treeLayoutGeneration(0)
+                Rectangle().fill(.orange).frame(width: 100, height: 100)
+                    .overlay { Text("1-0") }
+                    .treeLayoutGeneration(1)
+                Rectangle().fill(.cyan).frame(width: 100, height: 100)
+                    .overlay { Text("1-1") }
+                    .treeLayoutGeneration(1)
+                Rectangle().fill(.brown).frame(width: 100, height: 100)
+                    .overlay { Text("1-2") }
+                    .treeLayoutGeneration(1)
+                Rectangle().fill(.blue).frame(width: 100, height: 100)
+                    .overlay { Text("2-0") }
+                    .treeLayoutGeneration(2)
+                Rectangle().fill(.red).frame(width: 100, height: 100)
+                    .overlay { Text("2-1") }
+                    .treeLayoutGeneration(2)
+                Rectangle().fill(.green).frame(width: 100, height: 100)
+                    .overlay { Text("2-2") }
+                    .treeLayoutGeneration(2)
+                Rectangle().fill(.yellow).frame(width: 100, height: 100)
+                    .overlay { Text("2-3") }
+                    .treeLayoutGeneration(2)
+                Rectangle().fill(.orange).frame(width: 100, height: 100)
+                    .overlay { Text("3-0") }
+                    .treeLayoutGeneration(3)
+                Rectangle().fill(.cyan).frame(width: 100, height: 100)
+                    .overlay { Text("3-1") }
+                    .treeLayoutGeneration(3)
+                Rectangle().fill(.brown).frame(width: 100, height: 100)
+                    .overlay { Text("3-2") }
+                    .treeLayoutGeneration(3)
+                Rectangle().fill(.gray).frame(width: 100, height: 100)
+                    .overlay { Text("3-3") }
+                    .treeLayoutGeneration(3)
+            }
+        }
     }
     
     @ViewBuilder

@@ -13,7 +13,7 @@ import SDSCGExtension
 
 extension OSLog {
     // static var log = Logger(subsystem: "com.smalldesksoftware.sdslayout", category: "RatioHStack")
-    fileprivate static var log = Logger(.disabled)
+    fileprivate static let log = Logger(.disabled)
 }
 
 public enum RatioSpec {
